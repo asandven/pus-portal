@@ -5,17 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>8C Skoleportal · Matte-agent</title>
 <link rel="stylesheet" href="../style.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  /* ── MATTE-AGENT SPESIFIKT ── */
-  .agent-layout {
+  /* ── LAYOUT ── */
+  .agent-wrap {
     display: flex;
     height: calc(100vh - 68px);
     overflow: hidden;
   }
 
-  /* VENSTRE PANEL */
+  /* ── VENSTRE PANEL ── */
   .left-panel {
     width: 340px;
     flex-shrink: 0;
@@ -27,253 +26,96 @@
   }
 
   .left-panel-header {
-    padding: 16px;
+    padding: 14px 16px;
     border-bottom: 1px solid var(--border);
     background: var(--bg2);
+    flex-shrink: 0;
   }
 
-  .left-panel-header h2 {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 10px;
-  }
+  .left-panel-header h2 { font-size: 0.9rem; font-weight: 700; margin-bottom: 10px; }
 
-  .chapter-tabs {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-  }
+  .chapter-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
 
   .tab {
-    font-size: 0.72rem;
-    padding: 4px 10px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    background: var(--white);
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-    font-family: inherit;
+    font-size: 0.72rem; padding: 4px 10px; border-radius: 20px;
+    border: 1px solid var(--border); background: var(--white);
+    color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+    white-space: nowrap; font-family: inherit;
   }
-
-  .tab:hover {
-    background: #fff1f2;
-    color: var(--brand);
-    border-color: var(--brand);
-  }
-
-  .tab.active {
-    background: var(--brand);
-    color: white;
-    border-color: var(--brand);
-  }
+  .tab:hover { background: #fff1f2; color: var(--brand); border-color: var(--brand); }
+  .tab.active { background: var(--brand); color: white; border-color: var(--brand); }
 
   .tasks-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 14px 16px;
-    font-size: 0.88rem;
-    line-height: 1.8;
-    color: var(--text);
+    flex: 1; overflow-y: auto; padding: 14px 16px;
+    font-size: 0.88rem; line-height: 1.8; color: var(--text);
   }
 
-  .tasks-content h3 {
-    font-size: 0.82rem;
-    font-weight: 700;
-    margin: 12px 0 6px;
-    color: var(--brand);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .tasks-content h4 {
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin: 10px 0 4px;
-    color: var(--brand-light);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .tasks-content ul {
-    padding-left: 18px;
-    margin: 4px 0;
-  }
-
+  .tasks-content h3 { font-size: 0.78rem; font-weight: 700; margin: 12px 0 6px; color: var(--brand); text-transform: uppercase; letter-spacing: 0.05em; }
+  .tasks-content h4 { font-size: 0.72rem; font-weight: 600; margin: 10px 0 4px; color: var(--brand-light); text-transform: uppercase; }
+  .tasks-content ul { padding-left: 18px; margin: 4px 0; }
   .tasks-content li { margin: 3px 0; }
 
   .tasks-content li.clickable-task {
-    cursor: pointer;
-    padding: 5px 8px 5px 26px;
-    border-radius: 6px;
-    margin: 4px 0;
-    border: 1px solid transparent;
-    transition: all 0.15s;
-    list-style: none;
-    margin-left: -18px;
-    position: relative;
+    cursor: pointer; padding: 5px 8px 5px 26px; border-radius: 6px;
+    margin: 4px 0 4px -18px; border: 1px solid transparent;
+    transition: all 0.15s; list-style: none; position: relative;
   }
-
-  .tasks-content li.clickable-task::before {
-    content: "▶";
-    position: absolute;
-    left: 8px;
-    font-size: 9px;
-    color: #9ca3af;
-    top: 8px;
-  }
-
-  .tasks-content li.clickable-task:hover {
-    background: #fff1f2;
-    border-color: var(--brand);
-    color: var(--brand);
-  }
-
+  .tasks-content li.clickable-task::before { content: "▶"; position: absolute; left: 8px; font-size: 9px; color: #9ca3af; top: 8px; }
+  .tasks-content li.clickable-task:hover { background: #fff1f2; border-color: var(--brand); color: var(--brand); }
   .tasks-content li.clickable-task:hover::before { color: var(--brand); }
-
-  .tasks-content li.clickable-task.selected {
-    background: var(--brand);
-    color: white;
-    border-color: var(--brand);
-  }
-
+  .tasks-content li.clickable-task.selected { background: var(--brand); color: white; border-color: var(--brand); }
   .tasks-content li.clickable-task.selected::before { color: white; }
 
-  .difficulty-badge {
-    display: inline-block;
-    font-size: 0.68rem;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 20px;
-    margin: 8px 0 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
+  .difficulty-badge { display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin: 8px 0 4px; text-transform: uppercase; letter-spacing: 0.5px; }
   .lav    { background: #dcfce7; color: #16a34a; }
   .middels { background: #fef9c3; color: #a16207; }
   .hoy    { background: #fee2e2; color: #dc2626; }
 
-  /* HØYRE PANEL – CHAT */
+  /* ── HØYRE PANEL ── */
   .right-panel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: var(--bg);
+    flex: 1; display: flex; flex-direction: column;
+    overflow: hidden; background: var(--bg);
   }
 
   .chat-area {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    flex: 1; overflow-y: auto; padding: 20px;
+    display: flex; flex-direction: column; gap: 12px;
   }
 
   .msg { display: flex; flex-direction: column; gap: 4px; max-width: 80%; }
   .msg.user { align-self: flex-end; align-items: flex-end; }
   .msg.bot  { align-self: flex-start; }
-
-  .msg-label {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    font-weight: 500;
-  }
-
-  .msg-bubble {
-    padding: 12px 16px;
-    border-radius: var(--radius);
-    font-size: 0.9rem;
-    line-height: 1.7;
-    white-space: pre-wrap;
-  }
-
-  .msg.user .msg-bubble {
-    background: var(--brand);
-    color: white;
-    border-bottom-right-radius: 4px;
-  }
-
-  .msg.bot .msg-bubble {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-bottom-left-radius: 4px;
-    box-shadow: var(--shadow);
-  }
-
-  .msg.bot .msg-bubble.thinking {
-    color: var(--text-muted);
-    font-style: italic;
-  }
+  .msg-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 500; }
+  .msg-bubble { padding: 12px 16px; border-radius: var(--radius); font-size: 0.9rem; line-height: 1.7; white-space: pre-wrap; }
+  .msg.user .msg-bubble { background: var(--brand); color: white; border-bottom-right-radius: 4px; }
+  .msg.bot .msg-bubble { background: var(--white); border: 1px solid var(--border); border-bottom-left-radius: 4px; box-shadow: var(--shadow); }
+  .msg.bot .msg-bubble.thinking { color: var(--text-muted); font-style: italic; }
 
   .chat-footer {
-    padding: 14px 16px;
-    background: var(--white);
-    border-top: 1px solid var(--border);
+    padding: 12px 16px; background: var(--white);
+    border-top: 1px solid var(--border); flex-shrink: 0;
   }
 
-  .quick-btns {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-  }
-
+  .quick-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
   .quick-btn {
-    font-size: 0.78rem;
-    padding: 5px 12px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.15s;
-    font-family: inherit;
+    font-size: 0.75rem; padding: 5px 12px; border-radius: 20px;
+    border: 1px solid var(--border); background: var(--bg);
+    color: var(--text-muted); cursor: pointer; transition: all 0.15s; font-family: inherit;
   }
-
-  .quick-btn:hover {
-    background: #fff1f2;
-    color: var(--brand);
-    border-color: var(--brand);
-  }
+  .quick-btn:hover { background: #fff1f2; color: var(--brand); border-color: var(--brand); }
 
   .input-row { display: flex; gap: 8px; }
-
   #user-input {
-    flex: 1;
-    padding: 10px 14px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    font-size: 0.9rem;
-    background: var(--bg);
-    color: var(--text);
-    font-family: inherit;
-    transition: all 0.2s;
+    flex: 1; padding: 10px 14px; border: 1px solid var(--border);
+    border-radius: var(--radius); font-size: 0.9rem;
+    background: var(--bg); color: var(--text); font-family: inherit; transition: all 0.2s;
   }
-
-  #user-input:focus {
-    outline: none;
-    border-color: var(--brand);
-    background: white;
-  }
-
+  #user-input:focus { outline: none; border-color: var(--brand); background: white; }
   #send-btn {
-    padding: 10px 20px;
-    border-radius: var(--radius);
-    border: none;
-    background: var(--brand);
-    color: white;
-    font-size: 0.88rem;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.15s;
+    padding: 10px 20px; border-radius: var(--radius); border: none;
+    background: var(--brand); color: white; font-size: 0.88rem;
+    font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s;
   }
-
   #send-btn:hover { background: var(--brand-light); }
   #send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -281,16 +123,64 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
+  /* ── MOBIL TABS ── */
+  .mobile-tabs {
+    display: none;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+  }
+
+  .mobile-tab-btn {
+    flex: 1; padding: 12px; border: none; background: none;
+    font-family: inherit; font-size: 0.9rem; font-weight: 600;
+    color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent;
+    transition: all 0.15s;
+  }
+
+  .mobile-tab-btn.active {
+    color: var(--brand);
+    border-bottom-color: var(--brand);
+  }
+
+  /* Mobil: vis kun aktiv panel */
   @media (max-width: 768px) {
-    .agent-layout { flex-direction: column; height: auto; }
-    .left-panel { width: 100%; height: 220px; }
-    .right-panel { height: calc(100vh - 68px - 220px); }
+    .agent-wrap {
+      flex-direction: column;
+      height: calc(100vh - 68px);
+    }
+
+    .mobile-tabs {
+      display: flex;
+      flex-shrink: 0;
+    }
+
+    .left-panel {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      display: none;
+      height: calc(100vh - 68px - 48px);
+    }
+
+    .left-panel.mob-active { display: flex; }
+
+    .right-panel {
+      display: none;
+      height: calc(100vh - 68px - 48px);
+    }
+
+    .right-panel.mob-active { display: flex; }
+
+    .msg { max-width: 92%; }
+    .quick-btns { gap: 4px; }
+    .quick-btn { font-size: 0.7rem; padding: 4px 10px; }
   }
 </style>
 </head>
 <body>
 
-<!-- NAV – identisk med hovedsiden -->
+<!-- NAV -->
 <nav class="top-bar">
   <div class="nav-container">
     <a class="brand" href="../index.html">
@@ -306,11 +196,15 @@
   </div>
 </nav>
 
-<!-- HOVED-LAYOUT -->
-<div class="agent-layout">
+<!-- MOBIL TABS -->
+<div class="mobile-tabs">
+  <button class="mobile-tab-btn active" id="mob-tab-oppgaver" onclick="mobSwitch('oppgaver')">📚 Oppgaver</button>
+  <button class="mobile-tab-btn" id="mob-tab-chat" onclick="mobSwitch('chat')">💬 Chat</button>
+</div>
 
-  <!-- VENSTRE: Oppgaver -->
-  <div class="left-panel">
+<!-- HOVED-LAYOUT -->
+<div class="agent-wrap">
+  <div class="left-panel mob-active" id="panel-oppgaver">
     <div class="left-panel-header">
       <h2>📚 Velg kapittel</h2>
       <div class="chapter-tabs" id="chapter-tabs"></div>
@@ -318,8 +212,7 @@
     <div class="tasks-content" id="tasks-content"></div>
   </div>
 
-  <!-- HØYRE: Chat -->
-  <div class="right-panel">
+  <div class="right-panel" id="panel-chat">
     <div class="chat-area" id="chat-area"></div>
     <div class="chat-footer">
       <div class="quick-btns">
@@ -334,7 +227,6 @@
       </div>
     </div>
   </div>
-
 </div>
 
 <script>
@@ -342,112 +234,80 @@ function toggleMenu() {
   document.getElementById('navLinks').classList.toggle('show');
 }
 
+function mobSwitch(panel) {
+  const isOppgaver = panel === 'oppgaver';
+  document.getElementById('panel-oppgaver').classList.toggle('mob-active', isOppgaver);
+  document.getElementById('panel-chat').classList.toggle('mob-active', !isOppgaver);
+  document.getElementById('mob-tab-oppgaver').classList.toggle('active', isOppgaver);
+  document.getElementById('mob-tab-chat').classList.toggle('active', !isOppgaver);
+  if (!isOppgaver) document.getElementById('user-input').focus();
+}
+
 const API_URL = "https://raspberrypi.tail063df7.ts.net/chat";
 let history = [];
 let currentChapter = 0;
 
 const chapters = [
-  {
-    title: "1. Regnerekkefølge", short: "Regneregel",
-    content: `<h3>Huskeregel</h3><ul><li>Parenteser først</li><li>Potenser</li><li>Ganging og deling</li><li>Addisjon og subtraksjon</li></ul>
+  { title: "1. Regnerekkefølge", short: "Regneregel", content: `<h3>Huskeregel</h3><ul><li>Parenteser først</li><li>Potenser</li><li>Ganging og deling</li><li>Addisjon og subtraksjon</li></ul>
 <span class="difficulty-badge lav">Lav</span>
 <ul><li>4 + 3 · 2</li><li>12 − 5 · 2</li><li>20 : 4 + 7</li><li>6 + 8 : 2</li><li>(4 + 2) · 3</li><li>18 : (3 + 3)</li><li>(10 − 6) · 5</li><li>24 : (2 · 3)</li></ul>
 <span class="difficulty-badge middels">Middels</span>
 <ul><li>5 + 2 · 6 − 3</li><li>18 : 3 + 4 · 2</li><li>(7 + 5) · 2 − 8</li><li>30 − 4 · (5 − 2)</li><li>16 : 2 · 4</li><li>40 − 6 · 3 + 8</li><li>(15 − 5) : 2 + 7</li><li>3 · (8 − 2) + 5</li></ul>
 <span class="difficulty-badge hoy">Høy</span>
-<ul><li>24 − 3 · (4 + 2)</li><li>5 · (8 − 3) + 12 : 4</li><li>48 : (6 − 2) + 7 · 3</li><li>(20 − 8) : 4 + 6 · 2</li><li>Lag et uttrykk som gir 18 (bruk minst tre regnearter)</li><li>Lag et uttrykk som gir 25</li><li>Lag et uttrykk som gir 40</li></ul>`
-  },
-  {
-    title: "2. Prosent", short: "Prosent",
-    content: `<span class="difficulty-badge lav">Lav</span>
+<ul><li>24 − 3 · (4 + 2)</li><li>5 · (8 − 3) + 12 : 4</li><li>48 : (6 − 2) + 7 · 3</li><li>(20 − 8) : 4 + 6 · 2</li><li>Lag et uttrykk som gir 18 (bruk minst tre regnearter)</li><li>Lag et uttrykk som gir 25</li><li>Lag et uttrykk som gir 40</li></ul>` },
+  { title: "2. Prosent", short: "Prosent", content: `<span class="difficulty-badge lav">Lav</span>
 <ul><li>Finn 10 % av 50</li><li>Finn 10 % av 120</li><li>Finn 10 % av 300</li><li>Finn 25 % av 40</li><li>Finn 25 % av 80</li><li>Finn 25 % av 200</li><li>Hvor mange prosent er 5 av 10?</li><li>Hvor mange prosent er 3 av 12?</li><li>Hvor mange prosent er 15 av 20?</li></ul>
 <span class="difficulty-badge middels">Middels</span>
 <ul><li>Finn 15 % av 200</li><li>Finn 30 % av 450</li><li>Finn 12 % av 150</li><li>Hvor mange prosent er 18 av 60?</li><li>Hvor mange prosent er 45 av 90?</li><li>Hvor mange prosent er 16 av 80?</li><li>En bukse koster 600 kr med 20 % rabatt. Hva er rabatten og ny pris?</li></ul>
 <span class="difficulty-badge hoy">Høy</span>
-<ul><li>En mobil kostet 4000 kr og prisen økte med 15 %. Hvor mye økte prisen og hva er ny pris?</li><li>84 av 120 elever er med på fotball. Hvor mange prosent er det?</li><li>En vare koster 1200 kr etter 25 % rabatt. Hva kostet varen før rabatt?</li></ul>`
-  },
-  {
-    title: "3. Funksjoner", short: "Funksjoner",
-    content: `<span class="difficulty-badge lav">Lav</span>
+<ul><li>En mobil kostet 4000 kr og prisen økte med 15 %. Hvor mye økte prisen og hva er ny pris?</li><li>84 av 120 elever er med på fotball. Hvor mange prosent er det?</li><li>En vare koster 1200 kr etter 25 % rabatt. Hva kostet varen før rabatt?</li></ul>` },
+  { title: "3. Funksjoner", short: "Funksjoner", content: `<span class="difficulty-badge lav">Lav</span>
 <ul><li>Grafen går gjennom (0,2) og stiger med 1. Finn funksjonsuttrykket.</li><li>Grafen går gjennom (0,5) og stiger med 3. Finn funksjonsuttrykket.</li><li>Tegn grafen til y = x + 2</li><li>Tegn grafen til y = 2x</li></ul>
 <span class="difficulty-badge middels">Middels</span>
 <ul><li>Finn funksjonsuttrykket: y-skjæring 4, stigningstall 2</li><li>Finn funksjonsuttrykket: y-skjæring −1, stigningstall 5</li><li>Lag verditabell for y = 3x + 1</li><li>Lag verditabell for y = −2x + 4</li></ul>
 <span class="difficulty-badge hoy">Høy</span>
-<ul><li>En taxi tar 70 kr i startpris og 15 kr per kilometer. Lag funksjonsuttrykket og finn prisen etter 8 km.</li><li>Et lys er 30 cm og brenner ned 2 cm/time. Lag funksjonsuttrykket og finn høyden etter 5 timer.</li></ul>
-<h4>GeoGebra</h4>
-<ul><li>Tegn grafen til y = 2x + 3</li><li>Tegn grafen til y = −x + 4</li><li>Tegn grafen til y = 0,5x − 2</li></ul>`
-  },
-  {
-    title: "4. Scratch", short: "Scratch",
-    content: `<span class="difficulty-badge lav">Lav</span>
-<ul><li>Hva gjør blokken «gå 10 steg»?</li><li>Hva gjør blokken «si Hei!»?</li><li>Hva gjør blokken «vent 1 sekund»?</li><li>Lag et program der en figur går framover og sier navnet ditt.</li></ul>
+<ul><li>En taxi tar 70 kr i startpris og 15 kr per kilometer. Lag funksjonsuttrykket og finn prisen etter 8 km.</li><li>Et lys er 30 cm og brenner ned 2 cm/time. Lag funksjonsuttrykket og finn høyden etter 5 timer.</li></ul>` },
+  { title: "4. Scratch", short: "Scratch", content: `<span class="difficulty-badge lav">Lav</span>
+<ul><li>Hva gjør blokken «gå 10 steg»?</li><li>Hva gjør blokken «si Hei!»?</li><li>Lag et program der en figur går framover og sier navnet ditt.</li></ul>
 <span class="difficulty-badge middels">Middels</span>
 <ul><li>Lag et program der figuren beveger seg i en firkant og skifter farge.</li><li>Hva er forskjellen på «for alltid» og «gjenta 10 ganger»?</li></ul>
 <span class="difficulty-badge hoy">Høy</span>
-<ul><li>Lag et spill der figuren styres med piltastene, poeng øker når du treffer et objekt, og spillet stopper etter 30 sekunder.</li><li>Forklar hvordan variabler brukes i Scratch.</li></ul>`
-  },
-  {
-    title: "5. Algebra", short: "Algebra",
-    content: `<h3>Trekke sammen</h3>
+<ul><li>Lag et spill der figuren styres med piltastene, poeng øker når du treffer et objekt, og spillet stopper etter 30 sekunder.</li><li>Forklar hvordan variabler brukes i Scratch.</li></ul>` },
+  { title: "5. Algebra", short: "Algebra", content: `<h3>Trekke sammen</h3>
 <span class="difficulty-badge lav">Lav</span>
 <ul><li>2x + 3x</li><li>5a − 2a</li><li>4y + y</li><li>7m − 3m</li><li>10k + 2k</li></ul>
 <span class="difficulty-badge middels">Middels</span>
-<ul><li>3x + 4x − 2x</li><li>5a + 2 − 3a</li><li>8y − 2y + 6</li><li>Sett inn x = 4 i 2x + 5</li><li>Sett inn y = 3 i 4y − 7</li><li>Sett inn a = 2 i 3a + 8</li></ul>
+<ul><li>3x + 4x − 2x</li><li>5a + 2 − 3a</li><li>8y − 2y + 6</li><li>Sett inn x = 4 i 2x + 5</li><li>Sett inn y = 3 i 4y − 7</li></ul>
 <span class="difficulty-badge hoy">Høy</span>
-<ul><li>5x + 2y − 3x + y</li><li>8a − 2b + 3a + 4b</li><li>Sett inn x = 2 og y = 5 i 3x + 2y</li><li>Sett inn a = 4 og b = 1 i 2a − 3b</li></ul>
+<ul><li>5x + 2y − 3x + y</li><li>Sett inn x = 2 og y = 5 i 3x + 2y</li></ul>
 <h3>Forkorte brøker</h3>
 <span class="difficulty-badge lav">Lav</span>
 <ul><li>Forkort 2x/4</li><li>Forkort 6a/3</li><li>Forkort 10y/5</li></ul>
 <span class="difficulty-badge middels">Middels</span>
 <ul><li>Forkort 4x/8</li><li>Forkort 9a/3a</li><li>Forkort 12y/6</li></ul>
 <span class="difficulty-badge hoy">Høy</span>
-<ul><li>Forkort (6x + 6)/6</li><li>Forkort 12ab/4a</li><li>Forkort 15x²/5x</li></ul>
-<h3>Figurtall</h3>
-<span class="difficulty-badge lav">Lav</span>
-<ul><li>Finn neste: 2, 4, 6, 8, __</li><li>Finn neste: 3, 6, 9, 12, __</li></ul>
+<ul><li>Forkort (6x + 6)/6</li><li>Forkort 12ab/4a</li><li>Forkort 15x²/5x</li></ul>` },
+  { title: "6. Potenser", short: "Potenser", content: `<span class="difficulty-badge lav">Lav</span>
+<ul><li>Regn ut 2²</li><li>Regn ut 5²</li><li>Regn ut 10²</li><li>Finn kvadratroten av 16</li><li>Finn kvadratroten av 25</li></ul>
 <span class="difficulty-badge middels">Middels</span>
-<ul><li>Finn neste: 1, 4, 7, 10, __</li><li>Finn neste: 5, 10, 15, 20, __</li></ul>
+<ul><li>Regn ut 3³</li><li>Regn ut 2⁴</li><li>Skriv 3000 på standardform</li><li>Skriv 450000 på standardform</li></ul>
 <span class="difficulty-badge hoy">Høy</span>
-<ul><li>Et mønster starter på 3 og øker med 4. Skriv de fem første tallene og lag en formel.</li><li>Finn formel til tallrekken: 2, 5, 8, 11, …</li></ul>`
-  },
-  {
-    title: "6. Potenser", short: "Potenser",
-    content: `<span class="difficulty-badge lav">Lav</span>
-<ul><li>Regn ut 2²</li><li>Regn ut 5²</li><li>Regn ut 10²</li><li>Finn kvadratroten av 16</li><li>Finn kvadratroten av 25</li><li>Finn kvadratroten av 49</li></ul>
-<span class="difficulty-badge middels">Middels</span>
-<ul><li>Regn ut 3³</li><li>Regn ut 2⁴</li><li>Regn ut 5³</li><li>Skriv 3000 på standardform</li><li>Skriv 450000 på standardform</li><li>Skriv 0,004 på standardform</li></ul>
-<span class="difficulty-badge hoy">Høy</span>
-<ul><li>Regn ut 2³ · 2²</li><li>Regn ut 10⁴ : 10²</li><li>Skriv 3,2 · 10⁵ på vanlig form</li><li>Skriv 7,1 · 10⁻³ på vanlig form</li><li>Finn kvadratroten av 144</li><li>Finn kvadratroten av 196</li></ul>`
-  },
-  {
-    title: "7. Tallrekker", short: "Tallrekker",
-    content: `<span class="difficulty-badge lav">Lav</span>
+<ul><li>Regn ut 2³ · 2²</li><li>Regn ut 10⁴ : 10²</li><li>Skriv 3,2 · 10⁵ på vanlig form</li><li>Finn kvadratroten av 144</li></ul>` },
+  { title: "7. Tallrekker", short: "Tallrekker", content: `<span class="difficulty-badge lav">Lav</span>
 <ul><li>Finn neste: 2, 4, 6, 8, __</li><li>Finn neste: 10, 20, 30, __</li></ul>
 <span class="difficulty-badge middels">Middels</span>
 <ul><li>Finn neste: 3, 6, 12, 24, __</li><li>Finn neste: 1, 4, 9, 16, __</li></ul>
 <span class="difficulty-badge hoy">Høy</span>
-<ul><li>Finn de to neste: 2, 5, 10, 17, 26, __, __</li><li>Finn de to neste: 1, 1, 2, 3, 5, 8, __, __</li><li>Lag din egen tallrekke og forklar regelen.</li></ul>`
-  },
-  {
-    title: "8. Likninger", short: "Likninger",
-    content: `<span class="difficulty-badge lav">Lav</span>
+<ul><li>Finn de to neste: 2, 5, 10, 17, 26, __, __</li><li>Finn de to neste: 1, 1, 2, 3, 5, 8, __, __</li></ul>` },
+  { title: "8. Likninger", short: "Likninger", content: `<span class="difficulty-badge lav">Lav</span>
 <ul><li>x + 4 = 10</li><li>y − 3 = 8</li><li>2a = 12</li></ul>
 <span class="difficulty-badge middels">Middels</span>
 <ul><li>3x + 2 = 14</li><li>5y − 7 = 18</li><li>4a + 8 = 20</li></ul>
 <span class="difficulty-badge hoy">Høy</span>
-<ul><li>4x − 7 = 21</li><li>3(x + 2) = 18</li><li>5a − 2 = 3a + 10</li><li>En kino tar 120 kr per billett. Du har 600 kr. Sett opp en likning og finn antall billetter.</li></ul>`
-  }
+<ul><li>4x − 7 = 21</li><li>3(x + 2) = 18</li><li>5a − 2 = 3a + 10</li><li>En kino tar 120 kr per billett. Du har 600 kr. Sett opp en likning og finn antall billetter.</li></ul>` }
 ];
 
-const fullTasksText = `Arbeidshefte i matematikk – 8. trinn, Presterød Ungdomsskole.
-1. REGNEREKKEFØLGE: parenteser, potenser, gange/dele, addere/subtrahere.
-2. PROSENT: finne del, prosent, og hele. Rabatt-oppgaver.
-3. FUNKSJONER: stigningstall, y-skjæring, verditabell, tekstoppgaver, GeoGebra.
-4. SCRATCH: blokker, løkker, variabler, spill.
-5. ALGEBRA: trekke sammen, sette inn verdier, forkorte brøker, figurtall.
-6. POTENSER: regn ut, kvadratrot, standardform.
-7. TALLREKKER: aritmetiske, geometriske, Fibonacci.
-8. LIKNINGER: løse likninger, sette prøve, tekstoppgaver.`;
+const fullTasksText = `Arbeidshefte matematikk 8. trinn PUS. Kapitlene: 1.Regnerekkefølge 2.Prosent 3.Funksjoner 4.Scratch 5.Algebra 6.Potenser 7.Tallrekker 8.Likninger`;
 
 function buildTabs() {
   const tabs = document.getElementById('chapter-tabs');
@@ -468,10 +328,7 @@ function selectChapter(i) {
 }
 
 function makeTasksClickable() {
-  const skipPatterns = [
-    /^parenteser først$/i, /^potenser$/i, /^ganging og deling$/i,
-    /^addisjon og subtraksjon$/i, /^«.+»$/, /^hva skjer når/i,
-  ];
+  const skipPatterns = [/^parenteser først$/i, /^potenser$/i, /^ganging og deling$/i, /^addisjon og subtraksjon$/i];
   document.querySelectorAll('.tasks-content li').forEach(li => {
     const text = li.textContent.trim();
     if (text.length > 3 && !skipPatterns.some(p => p.test(text))) {
@@ -485,6 +342,8 @@ function selectTask(li, taskText) {
   document.querySelectorAll('.clickable-task.selected').forEach(el => el.classList.remove('selected'));
   li.classList.add('selected');
   const clean = taskText.replace(/\*\*/g, '').trim();
+  // Bytt til chat-tab på mobil automatisk
+  mobSwitch('chat');
   sendMessage(`Jeg vil jobbe med denne oppgaven fra ${chapters[currentChapter].title}:\n"${clean}"`);
 }
 
@@ -517,21 +376,11 @@ async function sendMessage(userText) {
   const selected = document.querySelector('.clickable-task.selected');
   const selectedText = selected ? selected.textContent.trim() : null;
 
-  const systemPrompt = `Du er en matematikk-assistent for elever på 8. trinn ved Presterød Ungdomsskole (PUS).
+  const systemPrompt = `Du er matte-assistent for 8. trinn ved Presterød Ungdomsskole.
+Kapittel nå: ${chapters[currentChapter].title}${selectedText ? '\nOppgave: ' + selectedText : ''}
 
-Oppgaver i arbeidsheftet: ${fullTasksText}
-
-Eleven ser nå på: ${chapters[currentChapter].title}${selectedText ? '\nValgt oppgave: ' + selectedText : ''}
-
-Arbeidsmåte:
-1. Når eleven velger oppgave: presenter den kort og spør "Hva er svaret ditt?"
-2. Riktig svar → "Riktig! 🎉" + kort bekreftelse
-3. Feil 1. gang → lite hint, prøv igjen
-4. Feil 2. gang → større hint med fremgangsmåte
-5. Feil 3. gang → full løsning med forklaring
-6. Spør direkte om svar → vis med forklaring
-
-Viktig: Svar kort (maks 3-4 linjer). Alltid norsk bokmål. Vennlig tone. Regn alltid fasiten selv først.`;
+Arbeidsmåte: 1) Presenter oppgaven kort, spør om svar. 2) Riktig → "Riktig! 🎉". 3) Feil 1.gang → hint. 4) Feil 2.gang → fremgangsmåte. 5) Feil 3.gang → full løsning.
+Svar alltid kort (maks 3-4 linjer). Norsk bokmål. Regn fasiten selv først.`;
 
   try {
     const resp = await fetch(API_URL, {
@@ -539,7 +388,7 @@ Viktig: Svar kort (maks 3-4 linjer). Alltid norsk bokmål. Vennlig tone. Regn al
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
-        messages: history.slice(-10)
+        messages: history.slice(-6)
       })
     });
     const data = await resp.json();
@@ -561,7 +410,7 @@ function quickSend(text) { sendMessage(text); }
 
 buildTabs();
 selectChapter(0);
-addMsg('bot', 'Hei! 😊 Velg et kapittel til venstre og klikk på en oppgave for å starte. Skriv svaret ditt, så hjelper jeg deg videre!');
+addMsg('bot', 'Hei! 😊 Velg et kapittel og klikk på en oppgave for å starte. Skriv svaret ditt, så hjelper jeg deg videre!');
 
 document.getElementById('send-btn').addEventListener('click', () => sendMessage(document.getElementById('user-input').value));
 document.getElementById('user-input').addEventListener('keydown', e => {
