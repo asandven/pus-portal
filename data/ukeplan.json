@@ -1,8 +1,22 @@
 {
-  "uke": null,
-  "oppdatert": null,
-  "meldinger": [],
-  "prover": [],
-  "timeplan": [],
-  "lekser": []
+  "uke": 22,
+  "oppdatert": "",
+  "meldinger": ["Mandag: FRI 2. pinsedag"],
+  "prover": ["Torsdag: Mattetentamen", "Fredag: Prøve i KRLE"],
+  "timeplan": [
+    {"tid": "08:25-08:55", "mandag": "Utdanningsvalg", "tirsdag": "", "onsdag": "Norsk", "torsdag": "Norsk", "fredag": "Samf"},
+    {"tid": "09:00-10:00", "mandag": "KRLE", "tirsdag": "Naturfag", "onsdag": "Engelsk", "torsdag": "", "fredag": "Gym"},
+    {"tid": "10:15-11:15", "mandag": "Matte", "tirsdag": "Språk", "onsdag": "Matte", "torsdag": "Språk", "fredag": "Engelsk"},
+    {"tid": "12:00-13:00", "mandag": "Norsk", "tirsdag": "Gym", "onsdag": "Musikk", "torsdag": "Matte", "fredag": "Kunst & Håndverk"},
+    {"tid": "13:15-14:15", "mandag": "Valgfag", "tirsdag": "Norsk", "onsdag": "KRLE / Samf", "torsdag": "Naturfag", "fredag": "Kunst & Håndverk"},
+    {"tid": "14:15-14:45", "mandag": "Valgfag", "tirsdag": "Norsk", "onsdag": "", "torsdag": "", "fredag": ""},
+    {"tid": "14:45-15:45", "mandag": "Leksehjelp", "tirsdag": "Leksehjelp", "onsdag": "", "torsdag": "", "fredag": ""}
+  ],
+  "lekser": [
+    {"fag": "Engelsk", "tema": "London, Connect 8. \"The children of the Industrial Revolution\". p. 93", "lekse": "No homework", "laringsmal": ["To understand how London became a major city", "To know a little bit about the Industrial Revolution", "To know about famous landmarks in London today"]},
+    {"fag": "Matematikk", "tema": "Tentamen", "lekse": "Les på oppgaver i OneNote. Det går også å bruke https://asandven.github.io/matte-agent/ så lenge den varer", "laringsmal": ["Bli forberedt til tentamen"]},
+    {"fag": "Samfunnsfag", "tema": "Kap 11 Bærekraftig utvikling-vår felles fremtid, s. 206, Arena 8", "lekse": "Lekse til fredag: Les s. 193-199 i Arena 8: Svar på Finn svaret-spørsmålene på s. 199", "laringsmal": ["Kunne begrepene: jordbruksrevolusjonen, den industrielle revolusjonen, bærekraftig utvikling, demokrati, klima, bærekraftsmål, forbruk og natur", "Kunne gi eksempler på at økonomiske interesser og natur kan stå i konflikt med hverandre", "Kunne gi eksempler på at enkeltmennesker, teknologi og samfunnet kan gjøre noe for å få til bærekraftig utvikling"]},
+    {"fag": "KRLE", "tema": "Det gamle testamentet og s. 77, jødedommen, s.119. 8 store spørsmål", "lekse": "Til fredag: Øv til prøven vi skal ha på fredag. Se mål i OneNote-KRLE-Mål til kapitlet", "laringsmal": ["Kunne en oversikt over viktige hendelser i jødedommens historie", "Kunne forklare særpreget ved religionen", "Bli kjent med utvalgte tekster", "Kunne fortelle om jødedommen i Norge og verden i dag"]},
+    {"fag": "Kunst og Håndverk", "tema": "Pennal Barneleke", "lekse": "Oppgave og vurderingskriterier finner du i OneNote –Innholdsbibliotek - Oppgaver", "laringsmal": []}
+  ]
 }
