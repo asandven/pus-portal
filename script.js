@@ -1,143 +1,165 @@
-<!DOCTYPE html>
-<html lang="no">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IKT-Pus | 8C</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
+// ── NAV ──
+function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('show');
+}
 
-<nav class="top-bar">
-    <div class="nav-container">
-        <a class="brand" href="#">
-            <img src="puslogo.png" alt="PUS" class="brand-img">
-            <span class="brand-text">IKT-<span>Pus</span></span>
-        </a>
-        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-        <ul class="nav-links" id="navLinks">
-            <li><button class="nav-btn active" onclick="visSeksjon('oversikt', this)">Hjem</button></li>
-            <li><a href="matte-agent/index.html" class="nav-btn">Matte-agent</a></li>
-            <li><a href="ukearbeid/index.html" class="nav-btn">Ukearbeid</a></li>
-            <li><button class="nav-btn" onclick="visSeksjon('login', this)">Lærersone</button></li>
-        </ul>
-    </div>
-</nav>
+function visSeksjon(id, el) {
+    document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if (el) {
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+    }
+    document.getElementById('navLinks').classList.remove('show');
+}
 
-<!-- HERO SLIDESHOW -->
-<section class="hero">
-    <div class="hero-slides">
+// ── SLIDESHOW ──
+let slideIndex = 0;
+let slideTimer = null;
+const SLIDE_INTERVAL = 5000;
 
-        <div class="slide" id="slide-ukeplan">
-            <div class="slide-icon">📅</div>
-            <div class="slide-content">
-                <div class="slide-label" id="slide-ukeplan-label">Ukeplan</div>
-                <div class="slide-title" id="slide-ukeplan-title">Hva skjer denne uka?</div>
-                <div class="slide-body" id="slide-ukeplan-body">Laster ukeplan...</div>
-            </div>
-        </div>
+function initSlideshow() {
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    if (!slides.length) return;
 
-        <div class="slide" id="slide-prover">
-            <div class="slide-icon">📝</div>
-            <div class="slide-content">
-                <div class="slide-label">Prøver og innleveringer</div>
-                <div class="slide-title">Kommende prøver</div>
-                <div class="slide-body" id="slide-prover-body">Laster prøveplan...</div>
-            </div>
-        </div>
+    function goTo(n) {
+        slides.forEach(s => s.classList.remove('active'));
+        dots.forEach(d => d.classList.remove('active'));
+        slideIndex = (n + slides.length) % slides.length;
+        slides[slideIndex].classList.add('active');
+        dots[slideIndex].classList.add('active');
+    }
 
-        <div class="slide" id="slide-info">
-            <div class="slide-icon">💡</div>
-            <div class="slide-content">
-                <div class="slide-label">Verktøy</div>
-                <div class="slide-title">Trenger du hjelp med matte?</div>
-                <div class="slide-body">
-                    Prøv Matte-agenten – still spørsmål, få hint og øv til tentamen med AI-hjelp.
-                </div>
-            </div>
-        </div>
+    function next() { goTo(slideIndex + 1); }
 
-        <div class="slide-dots">
-            <button class="dot" onclick="goToSlide(0)"></button>
-            <button class="dot" onclick="goToSlide(1)"></button>
-            <button class="dot" onclick="goToSlide(2)"></button>
-        </div>
-    </div>
-</section>
+    window.goToSlide = goTo;
 
-<!-- INNHOLD -->
-<main class="main-content">
+    goTo(0);
+    slideTimer = setInterval(next, SLIDE_INTERVAL);
 
-    <!-- OVERSIKT -->
-    <section id="oversikt" class="tab-content">
+    document.querySelector('.hero')?.addEventListener('mouseenter', () => clearInterval(slideTimer));
+    document.querySelector('.hero')?.addEventListener('mouseleave', () => {
+        slideTimer = setInterval(next, SLIDE_INTERVAL);
+    });
+}
 
-        <p class="section-title">Denne uka</p>
-        <div class="card-grid">
+// ── LAST DATA FRA GITHUB ──
+const DATA_BASE = 'https://raw.githubusercontent.com/asandven/pus-portal/main/data/';
 
-            <div class="action-card" onclick="location.href='ukeplan.html'">
-                <div class="card-icon">📅</div>
-                <div class="card-body">
-                    <h2 id="ukeplan-kort-tittel">Ukeplan</h2>
-                    <p id="ukeplan-kort-tekst">Timeplan, lekser og læringsmål for uka.</p>
-                    <span class="btn-main">Se ukeplan →</span>
-                </div>
-            </div>
+async function lastSlideData() {
+    try {
+        const [ukeplan, proveplan] = await Promise.all([
+            fetch(DATA_BASE + 'ukeplan.json').then(r => r.json()),
+            fetch(DATA_BASE + 'proveplan.json').then(r => r.json()).catch(() => null)
+        ]);
+        oppdaterSlides(ukeplan, proveplan);
+    } catch (e) {
+        console.log('Bruker standard slides (ingen data lastet)');
+    }
+    initSlideshow();
+}
 
-            <div class="action-card" onclick="location.href='proveplan.html'">
-                <div class="card-icon">📝</div>
-                <div class="card-body">
-                    <h2>Prøveplan</h2>
-                    <p id="proveplan-kort-tekst">Oversikt over kommende prøver og innleveringer.</p>
-                    <span class="btn-main">Se prøveplan →</span>
-                </div>
-            </div>
+function oppdaterSlides(ukeplan, proveplan) {
+    // Ukeplan-slide
+    if (ukeplan) {
+        const label = document.getElementById('slide-ukeplan-label');
+        const title = document.getElementById('slide-ukeplan-title');
+        const body  = document.getElementById('slide-ukeplan-body');
 
-        </div>
+        if (label && ukeplan.uke) label.textContent = `Uke ${ukeplan.uke}`;
+        if (title) title.textContent = 'Hva skjer denne uka?';
 
-        <p class="section-title">Verktøy</p>
-        <div class="card-grid">
+        if (body) {
+            const meldinger = (ukeplan.meldinger || []);
+            const prover    = (ukeplan.prover || []);
+            let html = '';
+            if (meldinger.length) {
+                html += meldinger.slice(0, 2).map(m => `<div>📢 ${m}</div>`).join('');
+            }
+            if (prover.length) {
+                html += prover.slice(0, 2).map(p => `<div>📝 ${p}</div>`).join('');
+            }
+            if (!html) html = 'Ingen meldinger denne uka.';
+            body.innerHTML = html;
+        }
 
-            <div class="action-card" onclick="location.href='matte-agent/index.html'">
-                <div class="card-icon">📐</div>
-                <div class="card-body">
-                    <h2>Matte-agent</h2>
-                    <p>Øv til tentamen med AI-hjelp. Hint, fremgangsmåte og fasit.</p>
-                    <span class="btn-main">Åpne Matte-agent →</span>
-                </div>
-            </div>
+        // Oppdater kort på forsiden
+        const kortTittel = document.getElementById('ukeplan-kort-tittel');
+        const kortTekst  = document.getElementById('ukeplan-kort-tekst');
+        if (kortTittel && ukeplan.uke) kortTittel.textContent = `Ukeplan – Uke ${ukeplan.uke}`;
+        if (kortTekst && ukeplan.timeplan) {
+            const fag = [...new Set(
+                ukeplan.timeplan.flatMap(r => ['mandag','tirsdag','onsdag','torsdag','fredag'].map(d => r[d]).filter(Boolean))
+            )].slice(0, 4);
+            if (fag.length) kortTekst.textContent = `${fag.join(', ')} og mer.`;
+        }
+    }
 
-            <div class="action-card" onclick="location.href='ukearbeid/index.html'">
-                <div class="card-icon">✏️</div>
-                <div class="card-body">
-                    <h2>Ukearbeid</h2>
-                    <p>Ukens lekser og oppgaver. Fasit åpnes automatisk på fredag.</p>
-                    <span class="btn-main">Åpne ukearbeid →</span>
-                </div>
-            </div>
+    // Prøveplan-slide
+    if (proveplan) {
+        const body = document.getElementById('slide-prover-body');
+        const kortTekst = document.getElementById('proveplan-kort-tekst');
+        const prover = (proveplan.prover || []);
 
-        </div>
-    </section>
+        if (body) {
+            if (prover.length) {
+                body.innerHTML = prover.slice(0, 3)
+                    .map(p => `<div>Uke ${p.uke} ${p.dag}: ${p.fag} – ${p.type}</div>`)
+                    .join('');
+            } else {
+                body.textContent = 'Ingen kommende prøver registrert.';
+            }
+        }
 
-    <!-- LOGIN -->
-    <section id="login" class="tab-content">
-        <div class="auth-card">
-            <h2>🔐 Lærersone</h2>
-            <p>Skriv inn PIN-koden din for å få tilgang.</p>
-            <input type="password" id="pinCode" placeholder="••••" maxlength="6">
-            <button class="btn-main" onclick="sjekkLogin()" style="width:100%">Logg inn</button>
-        </div>
-    </section>
+        if (kortTekst && prover.length) {
+            kortTekst.textContent = `Neste: ${prover[0].fag} uke ${prover[0].uke} (${prover[0].dag})`;
+        }
+    }
+}
 
-    <!-- LÆRERSONE -->
-    <section id="laerersone" class="tab-content">
-        <div id="laererInnhold"></div>
-    </section>
+// ── PIN LOGIN ──
+const PINS = {
+    "f8638b979b2f4f793ddb6dbd197e0ee25a7a6ea32b0ae22f5e3c5d119d839e75": "laerer",
+    "888df25ae35772424a560c7152a1de794440e0ea5cfee62828333a456a506e05": "admin",
+};
 
-</main>
+async function sjekkLogin() {
+    const input = document.getElementById('pinCode');
+    if (!input) return;
+    const pin = input.value.trim();
+    if (!pin) return;
 
-<script src="script.js"></script>
-<script src="klassekart/klassekart.js"></script>
-</body>
-</html>
+    const hash = await sha256(pin);
+
+    if (PINS[hash] === 'admin' || PINS[hash] === 'laerer') {
+        visLaererSone();
+    } else {
+        input.value = '';
+        input.style.borderColor = '#ef4444';
+        setTimeout(() => { input.style.borderColor = ''; }, 1500);
+    }
+}
+
+function visLaererSone() {
+    visSeksjon('laerersone');
+    document.getElementById('laerersone').classList.add('active');
+    if (typeof startKlassekartModus === 'function') startKlassekartModus();
+}
+
+async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+    const første = document.querySelector('.tab-content');
+    if (første) første.classList.add('active');
+
+    document.getElementById('pinCode')?.addEventListener('keypress', e => {
+        if (e.key === 'Enter') sjekkLogin();
+    });
+
+    lastSlideData();
+});
