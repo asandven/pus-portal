@@ -4,36 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>8C Skoleportal · Ukeplan</title>
+<link rel="stylesheet" href="style.css">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --brand:       #6b121e;
-    --brand-dark:  #4a0d15;
-    --brand-light: #8b1e2e;
-    --navy:        #1e293b;
-    --bg:          #f8fafc;
-    --bg2:         #f1f5f9;
-    --text:        #1e293b;
-    --text-muted:  #64748b;
-    --border:      #e2e8f0;
-    --white:       #ffffff;
-    --radius:      12px;
-    --shadow:      0 4px 20px rgba(0,0,0,0.07);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 40px; }
-  header { background: var(--navy); color: white; padding: 28px 20px 24px; margin-bottom: 24px; }
-  header h1 { font-size: 0.8rem; font-weight: 600; opacity: 0.6; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; }
-  header .uke-nr { font-size: 2.8rem; font-weight: 700; line-height: 1; margin-bottom: 6px; }
-  header .uke-nr span { font-size: 1rem; font-weight: 400; opacity: 0.7; margin-left: 8px; }
-  header .oppdatert { font-size: 0.78rem; opacity: 0.55; font-family: 'DM Mono', monospace; }
-  .tilbake {
-    display: inline-flex; align-items: center; gap: 6px;
-    color: rgba(255,255,255,0.7); font-size: 0.85rem;
-    text-decoration: none; margin-bottom: 12px; transition: color 0.2s;
-  }
-  .tilbake:hover { color: white; }
-  .container { max-width: 900px; margin: 0 auto; padding: 0 16px; display: flex; flex-direction: column; gap: 16px; }
+  /* Ukeplan-spesifikt */
+  .uk-container { max-width: 900px; margin: 0 auto; padding: 24px 16px 40px; display: flex; flex-direction: column; gap: 16px; }
   .kort { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border); }
   .kort-tittel { background: var(--brand); color: white; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 10px 16px; }
   .to-kolonner { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -60,8 +35,15 @@
   .laringsmal { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
   .mal-tag { background: #fff1f2; color: var(--brand); font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
   .laster { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+  /* Hero */
+  .page-hero { background: var(--brand-dark); color: white; padding: 24px 0 20px; position: relative; overflow: hidden; border-bottom: 4px solid rgba(255,255,255,0.08); }
+  .page-hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(135deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 80px); pointer-events: none; }
+  .page-hero-inner { max-width: 900px; margin: 0 auto; padding: 0 16px; position: relative; }
+  .page-hero .breadcrumb { font-size: 0.72rem; font-weight: 600; opacity: 0.55; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; }
+  .page-hero .uke-nr { font-size: 2rem; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+  .page-hero .uke-nr span { font-size: 0.9rem; font-weight: 400; opacity: 0.6; margin-left: 8px; }
+  .page-hero .oppdatert { font-size: 0.72rem; opacity: 0.5; font-family: 'DM Mono', monospace; }
   @media (max-width: 600px) {
-    header .uke-nr { font-size: 2rem; }
     .to-kolonner { grid-template-columns: 1fr; }
     .lekse-grid { grid-template-columns: 1fr 1fr; }
     table { min-width: 480px; }
@@ -70,7 +52,24 @@
 </style>
 </head>
 <body>
+
+<!-- NAV -->
+<nav class="top-bar">
+  <div class="nav-container">
+    <a class="brand" href="index.html">
+      <img src="puslogo.png" alt="PUS" class="brand-img">
+      <span class="brand-text">8C – <span>Skoleportal</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-btn">← Hjem</a></li>
+      <li><a href="#" class="nav-btn active">Ukeplan</a></li>
+      <li><a href="proveplan.html" class="nav-btn">Prøveplan</a></li>
+    </ul>
+  </div>
+</nav>
+
 <div id="app"><div class="laster">Laster ukeplan…</div></div>
+
 <script>
 const JSON_URL = "https://raw.githubusercontent.com/asandven/pus-portal/main/data/ukeplan.json";
 
@@ -96,6 +95,8 @@ function render(data) {
   const oppdatert = data.oppdatert
     ? new Date(data.oppdatert).toLocaleDateString('no-NO', {weekday:'long', year:'numeric', month:'long', day:'numeric'})
     : '';
+
+  document.title = `8C Skoleportal · Ukeplan · Uke ${uke}`;
 
   const meldinger = (data.meldinger || []).length
     ? data.meldinger.map(m => `<div class="melding-item">${m}</div>`).join('')
@@ -131,12 +132,11 @@ function render(data) {
   document.getElementById('app').innerHTML = `
     <div class="page-hero">
       <div class="page-hero-inner">
-        <a class="tilbake" href="index.html">← Hjem</a>
-        <h1>8C – Skoleportal · Ukeplan</h1>
+        <div class="breadcrumb">8C – Skoleportal · Ukeplan</div>
         <div class="uke-nr">Uke ${uke}<span>${oppdatert}</span></div>
       </div>
     </div>
-    <div class="container">
+    <div class="uk-container">
       <div class="to-kolonner">
         <div class="kort">
           <div class="kort-tittel">📢 Meldinger</div>
@@ -152,10 +152,7 @@ function render(data) {
         <div class="timeplan-wrapper">
           <table>
             <thead>
-              <tr>
-                <th>Tid</th>
-                <th>Mandag</th><th>Tirsdag</th><th>Onsdag</th><th>Torsdag</th><th>Fredag</th>
-              </tr>
+              <tr><th>Tid</th><th>Mandag</th><th>Tirsdag</th><th>Onsdag</th><th>Torsdag</th><th>Fredag</th></tr>
             </thead>
             <tbody>${rader}</tbody>
           </table>
@@ -169,12 +166,9 @@ function render(data) {
   `;
 }
 
-fetch(JSON_URL)
-  .then(r => r.json())
-  .then(render)
+fetch(JSON_URL).then(r => r.json()).then(render)
   .catch(e => {
-    document.getElementById('app').innerHTML =
-      `<div class="laster">Kunne ikke laste ukeplan: ${e.message}</div>`;
+    document.getElementById('app').innerHTML = `<div class="laster">Kunne ikke laste ukeplan: ${e.message}</div>`;
   });
 </script>
 </body>
