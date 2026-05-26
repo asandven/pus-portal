@@ -16,7 +16,7 @@ function visSeksjon(id, el) {
 // ── SLIDESHOW ──
 let slideIndex = 0;
 let slideTimer = null;
-const SLIDE_INTERVAL = 5000;
+const SLIDE_INTERVAL = 6000;
 
 function initSlideshow() {
     const slides = document.querySelectorAll('.slide');
@@ -32,15 +32,34 @@ function initSlideshow() {
     }
 
     function next() { goTo(slideIndex + 1); }
+    function resetTimer() {
+        clearInterval(slideTimer);
+        slideTimer = setInterval(next, SLIDE_INTERVAL);
+    }
 
-    window.goToSlide = goTo;
+    window.goToSlide = function(n) {
+        goTo(n);
+        resetTimer();
+    };
 
     goTo(0);
     slideTimer = setInterval(next, SLIDE_INTERVAL);
 
+    // Pause on hover
     document.querySelector('.hero')?.addEventListener('mouseenter', () => clearInterval(slideTimer));
-    document.querySelector('.hero')?.addEventListener('mouseleave', () => {
-        slideTimer = setInterval(next, SLIDE_INTERVAL);
+    document.querySelector('.hero')?.addEventListener('mouseleave', () => resetTimer());
+
+    // Swipe support for mobile
+    let touchStartX = 0;
+    document.querySelector('.hero')?.addEventListener('touchstart', e => {
+        touchStartX = e.touches[0].clientX;
+    });
+    document.querySelector('.hero')?.addEventListener('touchend', e => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) {
+            goTo(diff > 0 ? slideIndex + 1 : slideIndex - 1);
+            resetTimer();
+        }
     });
 }
 
@@ -49,72 +68,49 @@ const DATA_BASE = 'https://raw.githubusercontent.com/asandven/pus-portal/main/da
 
 async function lastSlideData() {
     try {
-        const [ukeplan, proveplan] = await Promise.all([
-            fetch(DATA_BASE + 'ukeplan.json').then(r => r.json()),
-            fetch(DATA_BASE + 'proveplan.json').then(r => r.json()).catch(() => null)
-        ]);
-        oppdaterSlides(ukeplan, proveplan);
+        const ukeplan = await fetch(DATA_BASE + 'ukeplan.json').then(r => r.json());
+        oppdaterSlides(ukeplan);
     } catch (e) {
         console.log('Bruker standard slides (ingen data lastet)');
     }
     initSlideshow();
 }
 
-function oppdaterSlides(ukeplan, proveplan) {
-    // Ukeplan-slide
-    if (ukeplan) {
-        const label = document.getElementById('slide-ukeplan-label');
-        const title = document.getElementById('slide-ukeplan-title');
-        const body  = document.getElementById('slide-ukeplan-body');
+function oppdaterSlides(ukeplan) {
+    if (!ukeplan) return;
 
-        if (label && ukeplan.uke) label.textContent = `Uke ${ukeplan.uke}`;
-        if (title) title.textContent = 'Hva skjer denne uka?';
+    const label = document.getElementById('slide-ukeplan-label');
+    const title = document.getElementById('slide-ukeplan-title');
+    const body  = document.getElementById('slide-ukeplan-body');
 
-        if (body) {
-            const meldinger = (ukeplan.meldinger || []);
-            const prover    = (ukeplan.prover || []);
-            let html = '';
-            if (meldinger.length) {
-                html += meldinger.slice(0, 2).map(m => `<div>📢 ${m}</div>`).join('');
-            }
-            if (prover.length) {
-                html += prover.slice(0, 2).map(p => `<div>📝 ${p}</div>`).join('');
-            }
-            if (!html) html = 'Ingen meldinger denne uka.';
-            body.innerHTML = html;
+    if (label && ukeplan.uke) label.textContent = `Uke ${ukeplan.uke}`;
+    if (title) title.textContent = 'Hva skjer denne uka?';
+
+    if (body) {
+        const meldinger = (ukeplan.meldinger || []);
+        const prover    = (ukeplan.prover || []);
+        let html = '';
+        if (meldinger.length) {
+            html += meldinger.slice(0, 2).map(m => `<div>📢 ${m}</div>`).join('');
         }
-
-        // Oppdater kort på forsiden
-        const kortTittel = document.getElementById('ukeplan-kort-tittel');
-        const kortTekst  = document.getElementById('ukeplan-kort-tekst');
-        if (kortTittel && ukeplan.uke) kortTittel.textContent = `Ukeplan – Uke ${ukeplan.uke}`;
-        if (kortTekst && ukeplan.timeplan) {
-            const fag = [...new Set(
-                ukeplan.timeplan.flatMap(r => ['mandag','tirsdag','onsdag','torsdag','fredag'].map(d => r[d]).filter(Boolean))
-            )].slice(0, 4);
-            if (fag.length) kortTekst.textContent = `${fag.join(', ')} og mer.`;
+        if (prover.length) {
+            html += prover.slice(0, 2).map(p => `<div>📝 ${p}</div>`).join('');
         }
+        if (!html) html = 'Ingen meldinger denne uka.';
+        body.innerHTML = html;
     }
 
-    // Prøveplan-slide
-    if (proveplan) {
-        const body = document.getElementById('slide-prover-body');
-        const kortTekst = document.getElementById('proveplan-kort-tekst');
-        const prover = (proveplan.prover || []);
-
-        if (body) {
-            if (prover.length) {
-                body.innerHTML = prover.slice(0, 3)
-                    .map(p => `<div>Uke ${p.uke} ${p.dag}: ${p.fag} – ${p.type}</div>`)
-                    .join('');
-            } else {
-                body.textContent = 'Ingen kommende prøver registrert.';
-            }
-        }
-
-        if (kortTekst && prover.length) {
-            kortTekst.textContent = `Neste: ${prover[0].fag} uke ${prover[0].uke} (${prover[0].dag})`;
-        }
+    // Oppdater kort på forsiden
+    const kortTittel = document.getElementById('ukeplan-kort-tittel');
+    const kortTekst  = document.getElementById('ukeplan-kort-tekst');
+    if (kortTittel && ukeplan.uke) kortTittel.textContent = `Ukeplan – Uke ${ukeplan.uke}`;
+    if (kortTekst && ukeplan.timeplan) {
+        const fag = [...new Set(
+            ukeplan.timeplan.flatMap(r =>
+                ['mandag','tirsdag','onsdag','torsdag','fredag'].map(d => r[d]).filter(Boolean)
+            )
+        )].slice(0, 4);
+        if (fag.length) kortTekst.textContent = `${fag.join(', ')} og mer.`;
     }
 }
 
@@ -129,9 +125,7 @@ async function sjekkLogin() {
     if (!input) return;
     const pin = input.value.trim();
     if (!pin) return;
-
     const hash = await sha256(pin);
-
     if (PINS[hash] === 'admin' || PINS[hash] === 'laerer') {
         visLaererSone();
     } else {
