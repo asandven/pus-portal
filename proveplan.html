@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prøveplan 8C</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand:      #6b121e;
+    --brand-dark: #4a0d15;
+    --navy:       #1e293b;
+    --bg:         #f8fafc;
+    --bg2:        #f1f5f9;
+    --text:       #1e293b;
+    --text-muted: #64748b;
+    --border:     #e2e8f0;
+    --white:      #ffffff;
+    --radius:     12px;
+    --shadow:     0 4px 20px rgba(0,0,0,0.07);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+  header {
+    background: var(--navy);
+    color: white;
+    padding: 28px 20px 24px;
+    margin-bottom: 24px;
+  }
+  header h1 { font-size: 0.8rem; font-weight: 600; opacity: 0.6; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; }
+  header .side-tittel { font-size: 2.4rem; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+  header .oppdatert { font-size: 0.78rem; opacity: 0.55; font-family: 'DM Mono', monospace; }
+  .tilbake {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: rgba(255,255,255,0.7); font-size: 0.85rem;
+    text-decoration: none; margin-bottom: 12px;
+    transition: color 0.2s;
+  }
+  .tilbake:hover { color: white; }
+  .container { max-width: 700px; margin: 0 auto; padding: 0 16px; display: flex; flex-direction: column; gap: 12px; }
+  .uke-gruppe { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
+  .uke-header {
+    background: var(--brand); color: white;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 10px 16px;
+  }
+  .prove-rad {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+  }
+  .prove-rad:last-child { border-bottom: none; }
+  .prove-dag {
+    font-family: 'DM Mono', monospace; font-size: 0.78rem;
+    color: var(--text-muted); min-width: 70px;
+  }
+  .prove-fag { font-weight: 600; font-size: 0.95rem; flex: 1; }
+  .prove-type {
+    background: #fff1f2; color: var(--brand);
+    font-size: 0.72rem; font-weight: 600; padding: 3px 10px;
+    border-radius: 20px; white-space: nowrap;
+  }
+  .tom { padding: 20px 16px; color: var(--text-muted); font-style: italic; font-size: 0.9rem; }
+  .laster { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div id="app"><div class="laster">Laster prøveplan…</div></div>
+<script>
+const JSON_URL = 'https://raw.githubusercontent.com/asandven/pus-portal/main/data/proveplan.json';
+
+function render(data) {
+    const oppdatert = data.oppdatert
+        ? new Date(data.oppdatert).toLocaleDateString('no-NO', {weekday:'long', year:'numeric', month:'long', day:'numeric'})
+        : '';
+
+    // Grupper prøver per uke
+    const grupper = {};
+    (data.prover || []).forEach(p => {
+        if (!grupper[p.uke]) grupper[p.uke] = [];
+        grupper[p.uke].push(p);
+    });
+
+    const uker = Object.keys(grupper).sort((a,b) => a-b);
+
+    const innhold = uker.length
+        ? uker.map(uke => `
+            <div class="uke-gruppe">
+                <div class="uke-header">Uke ${uke}</div>
+                ${grupper[uke].map(p => `
+                    <div class="prove-rad">
+                        <div class="prove-dag">${p.dag}</div>
+                        <div class="prove-fag">${p.fag}</div>
+                        <div class="prove-type">${p.type}</div>
+                    </div>
+                `).join('')}
+            </div>`).join('')
+        : '<div class="uke-gruppe"><div class="tom">Ingen prøver registrert.</div></div>';
+
+    document.getElementById('app').innerHTML = `
+        <header>
+            <a class="tilbake" href="index.html">← Tilbake</a>
+            <h1>Presterød ungdomsskole · 8C</h1>
+            <div class="side-tittel">Prøveplan</div>
+            ${oppdatert ? `<div class="oppdatert">Oppdatert ${oppdatert}</div>` : ''}
+        </header>
+        <div class="container">${innhold}</div>
+    `;
+}
+
+fetch(JSON_URL)
+    .then(r => r.json())
+    .then(render)
+    .catch(e => {
+        document.getElementById('app').innerHTML =
+            `<div class="laster">Kunne ikke laste prøveplan: ${e.message}</div>`;
+    });
+</script>
+</body>
+</html>
