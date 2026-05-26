@@ -34,10 +34,8 @@
             <div class="slide-icon">📅</div>
             <div class="slide-content">
                 <div class="slide-label" id="slide-ukeplan-label">Ukeplan</div>
-                <div class="slide-title">Hva skjer denne uka?</div>
-                <div class="slide-body" id="slide-ukeplan-body">
-                    Laster ukeplan...
-                </div>
+                <div class="slide-title" id="slide-ukeplan-title">Hva skjer denne uka?</div>
+                <div class="slide-body" id="slide-ukeplan-body">Laster ukeplan...</div>
             </div>
         </div>
 
@@ -46,9 +44,7 @@
             <div class="slide-content">
                 <div class="slide-label">Prøver og innleveringer</div>
                 <div class="slide-title">Kommende prøver</div>
-                <div class="slide-body" id="slide-prover-body">
-                    Laster prøveplan...
-                </div>
+                <div class="slide-body" id="slide-prover-body">Laster prøveplan...</div>
             </div>
         </div>
 
@@ -76,17 +72,32 @@
 
     <!-- OVERSIKT -->
     <section id="oversikt" class="tab-content">
-        <p class="section-title">Snarveier</p>
+
+        <p class="section-title">Denne uka</p>
         <div class="card-grid">
 
-            <div class="action-card" onclick="window.open('https://vestfold.sharepoint.com/:f:/s/Section_13fa9d3e-bd3e-4c47-b5e3-1fe9ef9965e9/IgAhVF7atUFHRZbg5eYcHTJMAXfa_JViUWRXqKFH9fMozGs', '_blank')">
+            <div class="action-card" onclick="location.href='ukeplan.html'">
                 <div class="card-icon">📅</div>
                 <div class="card-body">
-                    <h2>Uke- og prøveplan</h2>
-                    <p>Se hva som skjer denne uka og kommende prøver.</p>
-                    <span class="btn-main">Åpne OneNote ↗</span>
+                    <h2 id="ukeplan-kort-tittel">Ukeplan</h2>
+                    <p id="ukeplan-kort-tekst">Timeplan, lekser og læringsmål for uka.</p>
+                    <span class="btn-main">Se ukeplan →</span>
                 </div>
             </div>
+
+            <div class="action-card" onclick="location.href='proveplan.html'">
+                <div class="card-icon">📝</div>
+                <div class="card-body">
+                    <h2>Prøveplan</h2>
+                    <p id="proveplan-kort-tekst">Oversikt over kommende prøver og innleveringer.</p>
+                    <span class="btn-main">Se prøveplan →</span>
+                </div>
+            </div>
+
+        </div>
+
+        <p class="section-title">Verktøy</p>
+        <div class="card-grid">
 
             <div class="action-card" onclick="location.href='matte-agent/index.html'">
                 <div class="card-icon">📐</div>
@@ -119,7 +130,7 @@
         </div>
     </section>
 
-    <!-- LÆRERSONE (fylles av klassekart.js) -->
+    <!-- LÆRERSONE -->
     <section id="laerersone" class="tab-content">
         <div id="laererInnhold"></div>
     </section>
