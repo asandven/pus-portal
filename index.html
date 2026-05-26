@@ -7,6 +7,35 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .slide-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+        .slide-nav:hover {
+            background: rgba(255,255,255,0.25);
+            border-color: rgba(255,255,255,0.4);
+        }
+        .slide-nav.prev { left: 0; }
+        .slide-nav.next { right: 0; }
+        @media (max-width: 768px) {
+            .slide-nav { display: none; }
+        }
+    </style>
 </head>
 <body>
 
@@ -30,21 +59,15 @@
 <section class="hero">
     <div class="hero-slides">
 
+        <button class="slide-nav prev" onclick="goToSlide(slideIndex - 1)">&#8592;</button>
+        <button class="slide-nav next" onclick="goToSlide(slideIndex + 1)">&#8594;</button>
+
         <div class="slide" id="slide-ukeplan">
             <div class="slide-icon">📅</div>
             <div class="slide-content">
                 <div class="slide-label" id="slide-ukeplan-label">Ukeplan</div>
                 <div class="slide-title" id="slide-ukeplan-title">Hva skjer denne uka?</div>
                 <div class="slide-body" id="slide-ukeplan-body">Laster ukeplan...</div>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-prover">
-            <div class="slide-icon">📝</div>
-            <div class="slide-content">
-                <div class="slide-label">Prøver og innleveringer</div>
-                <div class="slide-title">Kommende prøver</div>
-                <div class="slide-body" id="slide-prover-body">Laster prøveplan...</div>
             </div>
         </div>
 
@@ -62,7 +85,6 @@
         <div class="slide-dots">
             <button class="dot" onclick="goToSlide(0)"></button>
             <button class="dot" onclick="goToSlide(1)"></button>
-            <button class="dot" onclick="goToSlide(2)"></button>
         </div>
     </div>
 </section>
