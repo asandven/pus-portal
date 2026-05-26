@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ukeplan 8C</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand:       #6b121e;
+    --brand-dark:  #4a0d15;
+    --brand-light: #8b1e2e;
+    --navy:        #1e293b;
+    --bg:          #f8fafc;
+    --bg2:         #f1f5f9;
+    --text:        #1e293b;
+    --text-muted:  #64748b;
+    --border:      #e2e8f0;
+    --white:       #ffffff;
+    --radius:      12px;
+    --shadow:      0 4px 20px rgba(0,0,0,0.07);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 40px; }
+  header { background: var(--navy); color: white; padding: 28px 20px 24px; margin-bottom: 24px; }
+  header h1 { font-size: 0.8rem; font-weight: 600; opacity: 0.6; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; }
+  header .uke-nr { font-size: 2.8rem; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+  header .uke-nr span { font-size: 1rem; font-weight: 400; opacity: 0.7; margin-left: 8px; }
+  header .oppdatert { font-size: 0.78rem; opacity: 0.55; font-family: 'DM Mono', monospace; }
+  .tilbake {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: rgba(255,255,255,0.7); font-size: 0.85rem;
+    text-decoration: none; margin-bottom: 12px; transition: color 0.2s;
+  }
+  .tilbake:hover { color: white; }
+  .container { max-width: 900px; margin: 0 auto; padding: 0 16px; display: flex; flex-direction: column; gap: 16px; }
+  .kort { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border); }
+  .kort-tittel { background: var(--brand); color: white; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 10px 16px; }
+  .to-kolonner { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .melding-liste, .prove-liste { padding: 14px 16px; font-size: 0.9rem; line-height: 1.6; }
+  .tom-tekst { color: var(--text-muted); font-style: italic; font-size: 0.85rem; }
+  .melding-item { padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  .melding-item:last-child { border-bottom: none; }
+  .timeplan-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  thead tr { background: #fff1f2; }
+  thead th { padding: 10px 8px; text-align: center; font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--brand); border-bottom: 2px solid var(--brand); }
+  thead th:first-child { text-align: left; padding-left: 14px; }
+  tbody tr:nth-child(even) { background: var(--bg2); }
+  tbody tr.pause { background: #eef2f7; }
+  tbody td { padding: 9px 8px; text-align: center; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tbody td:first-child { text-align: left; padding-left: 14px; font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; }
+  .leksehjelp { background: var(--navy); color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; display: inline-block; }
+  .lekse-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1px; background: var(--border); }
+  .lekse-kort { background: var(--white); padding: 14px 16px; }
+  .lekse-fag { font-weight: 700; font-size: 0.78rem; color: var(--brand); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .lekse-tema { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 5px; }
+  .lekse-tekst { font-size: 0.87rem; margin-bottom: 8px; line-height: 1.5; }
+  .ingen-lekse { font-size: 0.83rem; color: var(--text-muted); font-style: italic; }
+  .laringsmal { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .mal-tag { background: #fff1f2; color: var(--brand); font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+  .laster { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+  @media (max-width: 600px) {
+    header .uke-nr { font-size: 2rem; }
+    .to-kolonner { grid-template-columns: 1fr; }
+    .lekse-grid { grid-template-columns: 1fr 1fr; }
+    table { min-width: 480px; }
+  }
+  @media (max-width: 400px) { .lekse-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div id="app"><div class="laster">Laster ukeplan…</div></div>
+<script>
+const JSON_URL = "https://raw.githubusercontent.com/asandven/pus-portal/main/data/ukeplan.json";
+
+const FAG_REKKEFØLGE = [
+  "Norsk", "Engelsk", "Matematikk", "Naturfag", "Samfunnsfag",
+  "KRLE", "Kroppsøving", "Fremmedspråk", "Arbeidslivsfag",
+  "Utdanningsvalg", "Musikk", "Kunst og Håndverk"
+];
+
+function er_pause(rad) {
+  return !rad.mandag && !rad.tirsdag && !rad.onsdag && !rad.torsdag && !rad.fredag;
+}
+
+function celle(tekst) {
+  if (!tekst) return '<td></td>';
+  if (tekst.toLowerCase().includes('leksehjelp'))
+    return `<td><span class="leksehjelp">${tekst}</span></td>`;
+  return `<td>${tekst}</td>`;
+}
+
+function render(data) {
+  const uke = data.uke || '?';
+  const oppdatert = data.oppdatert
+    ? new Date(data.oppdatert).toLocaleDateString('no-NO', {weekday:'long', year:'numeric', month:'long', day:'numeric'})
+    : '';
+
+  const meldinger = (data.meldinger || []).length
+    ? data.meldinger.map(m => `<div class="melding-item">${m}</div>`).join('')
+    : '<div class="tom-tekst">Ingen meldinger</div>';
+
+  const prover = (data.prover || []).length
+    ? data.prover.map(p => `<div class="melding-item">${p}</div>`).join('')
+    : '<div class="tom-tekst">Ingen prøver</div>';
+
+  const dager = ['mandag','tirsdag','onsdag','torsdag','fredag'];
+  const rader = (data.timeplan || []).map(rad => {
+    const pause = er_pause(rad);
+    return `<tr class="${pause ? 'pause' : ''}">
+      <td>${rad.tid}</td>
+      ${dager.map(d => celle(rad[d])).join('')}
+    </tr>`;
+  }).join('');
+
+  const lekseMap = {};
+  (data.lekser || []).forEach(l => { lekseMap[l.fag] = l; });
+
+  const lekser = FAG_REKKEFØLGE.map(fag => {
+    const l = lekseMap[fag] || { fag, tema: '', lekse: '', laringsmal: [] };
+    const mal = (l.laringsmal || []).map(m => `<span class="mal-tag">${m}</span>`).join('');
+    return `<div class="lekse-kort">
+      <div class="lekse-fag">${fag}</div>
+      ${l.tema ? `<div class="lekse-tema">📖 ${l.tema}</div>` : ''}
+      <div class="lekse-tekst">${l.lekse || '<span class="ingen-lekse">Ingen lekser</span>'}</div>
+      ${mal ? `<div class="laringsmal">${mal}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  document.getElementById('app').innerHTML = `
+    <header>
+      <a class="tilbake" href="index.html">← Tilbake</a>
+      <h1>Presterød ungdomsskole · 8C</h1>
+      <div class="uke-nr">Uke ${uke}<span>${oppdatert}</span></div>
+    </header>
+    <div class="container">
+      <div class="to-kolonner">
+        <div class="kort">
+          <div class="kort-tittel">📢 Meldinger</div>
+          <div class="melding-liste">${meldinger}</div>
+        </div>
+        <div class="kort">
+          <div class="kort-tittel">📝 Prøver / frister</div>
+          <div class="prove-liste">${prover}</div>
+        </div>
+      </div>
+      <div class="kort">
+        <div class="kort-tittel">🗓 Timeplan</div>
+        <div class="timeplan-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Tid</th>
+                <th>Mandag</th><th>Tirsdag</th><th>Onsdag</th><th>Torsdag</th><th>Fredag</th>
+              </tr>
+            </thead>
+            <tbody>${rader}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="kort">
+        <div class="kort-tittel">📚 Lekser og læringsmål</div>
+        <div class="lekse-grid">${lekser}</div>
+      </div>
+    </div>
+  `;
+}
+
+fetch(JSON_URL)
+  .then(r => r.json())
+  .then(render)
+  .catch(e => {
+    document.getElementById('app').innerHTML =
+      `<div class="laster">Kunne ikke laste ukeplan: ${e.message}</div>`;
+  });
+</script>
+</body>
+</html>
