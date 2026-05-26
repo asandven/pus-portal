@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ukeplan 8C</title>
+<title>8C Skoleportal · Ukeplan</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -129,11 +129,13 @@ function render(data) {
   }).join('');
 
   document.getElementById('app').innerHTML = `
-    <header>
-      <a class="tilbake" href="index.html">← Tilbake</a>
-      <h1>Presterød ungdomsskole · 8C</h1>
-      <div class="uke-nr">Uke ${uke}<span>${oppdatert}</span></div>
-    </header>
+    <div class="page-hero">
+      <div class="page-hero-inner">
+        <a class="tilbake" href="index.html">← Hjem</a>
+        <h1>8C – Skoleportal · Ukeplan</h1>
+        <div class="uke-nr">Uke ${uke}<span>${oppdatert}</span></div>
+      </div>
+    </div>
     <div class="container">
       <div class="to-kolonner">
         <div class="kort">
