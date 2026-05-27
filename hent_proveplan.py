@@ -25,7 +25,7 @@ def vent_paa_innhold(min_lengde=200, timeout=60):
             if iframes:
                 driver.switch_to.frame(iframes[0])
             innhold = driver.find_element(By.CLASS_NAME, "OutlineContent")
-            tekst = innhold.text.strip()
+            tekst = innhold.get_attribute("innerHTML").strip()
             if len(tekst) >= min_lengde:
                 print(f" ok ({len(tekst)} tegn, {int(time.time()-start)}s)")
                 return tekst
@@ -34,12 +34,12 @@ def vent_paa_innhold(min_lengde=200, timeout=60):
         print(".", end="", flush=True)
         time.sleep(3)
     print(" fallback til body")
-    return driver.find_element(By.TAG_NAME, "body").text
+    return driver.find_element(By.TAG_NAME, "body").get_attribute("innerHTML")
 
 try:
     driver.get(ONENOTE_URL)
     tekst = vent_paa_innhold(min_lengde=200, timeout=60)
-    tekst = tekst[:10000]
+    tekst = tekst[:15000]
     print(f"Sender {len(tekst)} tegn til Pi...")
 
     resp = requests.post(PI_URL, json={"html": tekst})
