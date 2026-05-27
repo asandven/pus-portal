@@ -1,4 +1,8 @@
 {
   "oppdatert": "2026-05-27",
-  "prover": []
+  "prover": [
+    {"uke": 22, "dag": "Torsdag", "fag": "Matematikk", "type": "Tentamen"},
+    {"uke": 22, "dag": "Fredag", "fag": "KRLE", "type": "Prøve"},
+    {"uke": 23, "dag": "Fredag", "fag": "Samfunnsfag", "type": "Prøve"}
+  ]
 }
