@@ -7,17 +7,29 @@
 <link rel="stylesheet" href="style.css">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  /* Prøveplan-spesifikt */
-  .pp-container { max-width: 700px; margin: 0 auto; padding: 24px 16px 40px; display: flex; flex-direction: column; gap: 12px; }
-  .uke-gruppe { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
-  .uke-header { background: var(--brand); color: white; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 16px; }
+  .pp-container { max-width: 700px; margin: 0 auto; padding: 24px 16px 60px; display: flex; flex-direction: column; gap: 24px; }
+
+  /* Ukemeny */
+  .uke-nav { position: sticky; top: 68px; z-index: 100; background: var(--white); border-bottom: 1px solid var(--border); padding: 10px 16px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .uke-nav-btn { font-size: 0.8rem; font-weight: 600; padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg); color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: inherit; }
+  .uke-nav-btn:hover { background: #fff1f2; color: var(--brand); border-color: var(--brand); }
+  .uke-nav-btn.aktiv { background: var(--brand); color: white; border-color: var(--brand); }
+
+  /* Ukegruppe */
+  .uke-gruppe { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; scroll-margin-top: 120px; }
+  .uke-header { background: var(--brand); color: white; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+  .uke-header .uke-dato { font-weight: 400; opacity: 0.7; font-size: 0.72rem; font-family: 'DM Mono', monospace; }
+
+  /* Prøve-rad */
   .prove-rad { display: flex; align-items: center; gap: 16px; padding: 14px 16px; border-bottom: 1px solid var(--border); }
   .prove-rad:last-child { border-bottom: none; }
-  .prove-dag { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--text-muted); min-width: 70px; }
+  .prove-dag { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--text-muted); min-width: 72px; }
   .prove-fag { font-weight: 600; font-size: 0.95rem; flex: 1; }
   .prove-type { background: #fff1f2; color: var(--brand); font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+
   .tom { padding: 20px 16px; color: var(--text-muted); font-style: italic; font-size: 0.9rem; }
   .laster { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+
   /* Hero */
   .page-hero { background: var(--brand-dark); color: white; padding: 24px 0 20px; position: relative; overflow: hidden; border-bottom: 4px solid rgba(255,255,255,0.08); }
   .page-hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(135deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 80px); pointer-events: none; }
@@ -29,7 +41,6 @@
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="top-bar">
   <div class="nav-container">
     <a class="brand" href="index.html">
@@ -51,7 +62,7 @@ const JSON_URL = 'https://raw.githubusercontent.com/asandven/pus-portal/main/dat
 
 function render(data) {
   const oppdatert = data.oppdatert
-    ? new Date(data.oppdatert).toLocaleDateString('no-NO', {weekday:'long', year:'numeric', month:'long', day:'numeric'})
+    ? new Date(data.oppdatert).toLocaleDateString('no-NO', {year:'numeric', month:'long', day:'numeric'})
     : '';
 
   const grupper = {};
@@ -60,12 +71,22 @@ function render(data) {
     grupper[p.uke].push(p);
   });
 
-  const uker = Object.keys(grupper).sort((a,b) => a-b);
+  const uker = Object.keys(grupper).sort((a, b) => a - b);
+
+  const ukeNavKnapper = uker.map(uke =>
+    `<a class="uke-nav-btn" href="#uke-${uke}">Uke ${uke}</a>`
+  ).join('');
+
+  const ukeNav = uker.length > 1
+    ? `<div class="uke-nav" id="uke-nav">${ukeNavKnapper}</div>`
+    : '';
 
   const innhold = uker.length
     ? uker.map(uke => `
-        <div class="uke-gruppe">
-          <div class="uke-header">Uke ${uke}</div>
+        <div class="uke-gruppe" id="uke-${uke}">
+          <div class="uke-header">
+            <span>Uke ${uke}</span>
+          </div>
           ${grupper[uke].map(p => `
             <div class="prove-rad">
               <div class="prove-dag">${p.dag}</div>
@@ -83,8 +104,28 @@ function render(data) {
         ${oppdatert ? `<div class="oppdatert">Oppdatert ${oppdatert}</div>` : ''}
       </div>
     </div>
+    ${ukeNav}
     <div class="pp-container">${innhold}</div>
   `;
+
+  // Merk aktiv uke ved scroll
+  if (uker.length > 1) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          document.querySelectorAll('.uke-nav-btn').forEach(btn => {
+            btn.classList.toggle('aktiv', btn.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+
+    uker.forEach(uke => {
+      const el = document.getElementById('uke-' + uke);
+      if (el) observer.observe(el);
+    });
+  }
 }
 
 fetch(JSON_URL).then(r => r.json()).then(render)
