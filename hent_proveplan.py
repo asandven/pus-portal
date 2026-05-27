@@ -60,7 +60,7 @@ try:
     print(f"Sender {len(tekst)} tegn til Pi...")
     print(tekst[:500])
 
-    resp = requests.post(PI_URL, json={"tekst": tekst})
+    resp = requests.post(PI_URL, json={"html": tekst})
     print(f"Pi status: {resp.status_code}")
     print(f"Pi svarte: {resp.text}")
 
