@@ -15,7 +15,7 @@ options.add_argument("--profile-directory=Default")
 
 driver = webdriver.Edge(service=service, options=options)
 
-def vent_paa_innhold(min_lengde=200, timeout=60):
+def vent_paa_outline(timeout=60):
     print("Venter på innhold", end="", flush=True)
     start = time.time()
     while time.time() - start < timeout:
@@ -24,25 +24,43 @@ def vent_paa_innhold(min_lengde=200, timeout=60):
             iframes = driver.find_elements(By.TAG_NAME, "iframe")
             if iframes:
                 driver.switch_to.frame(iframes[0])
-            innhold = driver.find_element(By.CLASS_NAME, "OutlineContent")
-            tekst = innhold.get_attribute("innerHTML").strip()
-            if len(tekst) >= min_lengde:
-                print(f" ok ({len(tekst)} tegn, {int(time.time()-start)}s)")
-                return tekst
+            outline = driver.find_element(By.CLASS_NAME, "OutlineContent")
+            tabeller = outline.find_elements(By.TAG_NAME, "table")
+            if tabeller:
+                print(f" ok ({len(tabeller)} tabell(er), {int(time.time()-start)}s)")
+                return outline
         except:
             pass
         print(".", end="", flush=True)
         time.sleep(3)
-    print(" fallback til body")
-    return driver.find_element(By.TAG_NAME, "body").get_attribute("innerHTML")
+    print(" TIMEOUT")
+    return None
+
+def bygg_tekst(outline):
+    linjer = []
+    for tabell in outline.find_elements(By.TAG_NAME, "table"):
+        for rad in tabell.find_elements(By.TAG_NAME, "tr"):
+            celler = rad.find_elements(By.TAG_NAME, "td") or rad.find_elements(By.TAG_NAME, "th")
+            rad_tekst = " | ".join(c.text.strip() for c in celler)
+            if rad_tekst.strip():
+                linjer.append(rad_tekst)
+    return "\n".join(linjer)
 
 try:
     driver.get(ONENOTE_URL)
-    tekst = vent_paa_innhold(min_lengde=200, timeout=60)
+    outline = vent_paa_outline(timeout=60)
+
+    if not outline:
+        print("Fant ikke OutlineContent. Avslutter.")
+        driver.quit()
+        exit()
+
+    tekst = bygg_tekst(outline)
     tekst = tekst[:15000]
     print(f"Sender {len(tekst)} tegn til Pi...")
+    print(tekst[:500])
 
-    resp = requests.post(PI_URL, json={"html": tekst})
+    resp = requests.post(PI_URL, json={"tekst": tekst})
     print(f"Pi status: {resp.status_code}")
     print(f"Pi svarte: {resp.text}")
 
