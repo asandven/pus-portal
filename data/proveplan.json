@@ -1,22 +1,4 @@
 {
   "oppdatert": "2026-05-27",
-  "prover": [
-    {"uke": 3, "dag": "Torsdag", "fag": "Historie", "type": "Prøve"},
-    {"uke": 5, "dag": "Tirsdag", "fag": "Norsk", "type": "Språkprøve"},
-    {"uke": 7, "dag": "Torsdag", "fag": "Matematikk", "type": "Prøve"},
-    {"uke": 7, "dag": "Fredag", "fag": "Engelsk", "type": "Skrivetime"},
-    {"uke": 9, "dag": "Onsdag", "fag": "Naturfag", "type": "Prøve"},
-    {"uke": 10, "dag": "Onsdag", "fag": "KRLE", "type": "Prøve"},
-    {"uke": 13, "dag": "Tirsdag", "fag": "Norsk", "type": "Språkprøve"},
-    {"uke": 18, "dag": "Tirsdag", "fag": "KRLE", "type": "Presentasjon"},
-    {"uke": 19, "dag": "Onsdag", "fag": "Musikk", "type": "Folkemusikkprøve"},
-    {"uke": 19, "dag": "Fredag", "fag": "Engelsk", "type": "Lekseprøve"},
-    {"uke": 20, "dag": "Tirsdag", "fag": "Norsk", "type": "Språkprøve"},
-    {"uke": 20, "dag": "Onsdag", "fag": "Norsk", "type": "Tentamen"},
-    {"uke": 21, "dag": "Tirsdag", "fag": "Engelsk", "type": "Tentamen"},
-    {"uke": 22, "dag": "Onsdag", "fag": "Matematikk", "type": "Tentamen"},
-    {"uke": 22, "dag": "Fredag", "fag": "KRLE", "type": "Prøve"},
-    {"uke": 23, "dag": "Onsdag", "fag": "Samfunnsfag", "type": "Prøve"},
-    {"uke": 24, "dag": "Tirsdag", "fag": "Norsk", "type": "Fagdag muntlig"}
-  ]
+  "prover": []
 }
