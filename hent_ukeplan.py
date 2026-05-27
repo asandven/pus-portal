@@ -52,7 +52,7 @@ def vent_paa_uke(uke_tekst, timeout=90):
     print(f" TIMEOUT!")
     return None
 
-def vent_paa_innhold(min_lengde=500, timeout=40):
+def vent_paa_innhold(min_lengde=200, timeout=40):
     print(f"Venter på innhold", end="", flush=True)
     start = time.time()
     while time.time() - start < timeout:
@@ -83,11 +83,12 @@ try:
     print(f"Klikker '{uke_tekst}'...")
     actions.move_to_element(uke_elem).click().perform()
 
-    tekst = vent_paa_innhold(min_lengde=500, timeout=40)
+    tekst = vent_paa_innhold(min_lengde=200, timeout=40)
     tekst = tekst[:10000]
-    print(f"Sender {len(tekst)} tegn til Pi...")
+    print(f"Sender {len(tekst)} tegn til Pi (uke {uke})...")
 
-    resp = requests.post(PI_URL, json={"html": tekst})
+    # Send ukenummer eksplisitt — ikke la Claude gjette
+    resp = requests.post(PI_URL, json={"html": tekst, "uke": uke})
     print(f"Pi status: {resp.status_code}")
     print(f"Pi svarte: {resp.text}")
 
