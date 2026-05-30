@@ -9,14 +9,15 @@
 <style>
   .arkiv-container { max-width: 700px; margin: 0 auto; padding: 24px 16px 60px; display: flex; flex-direction: column; gap: 24px; }
 
-  /* Ukemeny */
-  .uke-nav { position: sticky; top: 68px; z-index: 100; background: var(--white); border-bottom: 1px solid var(--border); padding: 10px 16px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-  .uke-nav-btn { font-size: 0.8rem; font-weight: 600; padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg); color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: inherit; }
-  .uke-nav-btn:hover { background: #fff1f2; color: var(--brand); border-color: var(--brand); }
-  .uke-nav-btn.aktiv { background: var(--brand); color: white; border-color: var(--brand); }
+  /* Velg uke */
+  .velg-uke-wrap { max-width: 700px; margin: 0 auto; padding: 20px 16px 0; }
+  .velg-uke-select { width: 100%; padding: 12px 16px; font-size: 1rem; font-family: inherit; border: 1px solid var(--border); border-radius: var(--radius); background: var(--white); color: var(--text); cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b121e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; box-shadow: var(--shadow); }
+  .velg-uke-select:focus { outline: none; border-color: var(--brand); }
+
+  .ingen-valgt { text-align: center; padding: 60px 20px; color: var(--text-muted); font-size: 0.95rem; }
 
   /* Ukeplan-kort */
-  .uke-kort { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; scroll-margin-top: 120px; }
+  .uke-kort { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
   .uke-header { background: var(--brand); color: white; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
   .uke-header .uke-dato { font-weight: 400; opacity: 0.7; font-size: 0.72rem; font-family: 'DM Mono', monospace; }
 
@@ -25,10 +26,8 @@
   .seksjon:last-child { border-bottom: none; }
   .seksjon-tittel { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
 
-  /* Meldinger */
   .melding { font-size: 0.9rem; padding: 4px 0; color: var(--text); }
 
-  /* Lekser */
   .lekse-rad { padding: 10px 0; border-bottom: 1px solid var(--border); }
   .lekse-rad:last-child { border-bottom: none; }
   .lekse-fag { font-weight: 700; font-size: 0.9rem; color: var(--brand); margin-bottom: 2px; }
@@ -37,11 +36,9 @@
   .laringsmal-liste { margin-top: 6px; padding-left: 16px; }
   .laringsmal-liste li { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 2px; }
 
-  /* Prøver */
   .prove-tag { display: inline-block; background: #fff1f2; color: var(--brand); font-size: 0.78rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; margin: 3px 4px 3px 0; }
 
-  .tom { padding: 20px 16px; color: var(--text-muted); font-style: italic; font-size: 0.9rem; }
-  .laster { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+  .laster { text-align: center; padding: 40px 20px; color: var(--text-muted); }
 
   /* Hero */
   .page-hero { background: var(--brand-dark); color: white; padding: 24px 0 20px; position: relative; overflow: hidden; border-bottom: 4px solid rgba(255,255,255,0.08); }
@@ -74,14 +71,33 @@
 const GITHUB_API = 'https://api.github.com/repos/asandven/pus-portal/contents/data/arkiv';
 const RAW_BASE = 'https://raw.githubusercontent.com/asandven/pus-portal/main/data/arkiv';
 
+let ukefiler = [];
+
+function ukedatoer(uke, aar) {
+  // Finn mandag i gitt uke
+  const jan4 = new Date(aar, 0, 4);
+  const mandag = new Date(jan4);
+  mandag.setDate(jan4.getDate() - (jan4.getDay() || 7) + 1 + (uke - 1) * 7);
+  const fredag = new Date(mandag);
+  fredag.setDate(mandag.getDate() + 4);
+  const fmt = d => d.toLocaleDateString('no-NO', { day: 'numeric', month: 'short' });
+  return `${fmt(mandag)} – ${fmt(fredag)}`;
+}
+
+function gjetteAar(uke) {
+  const now = new Date();
+  const ar = now.getFullYear();
+  // Hvis uken er mye større enn nåværende uke, er det sannsynligvis fjoråret
+  const nowUke = Math.ceil(((now - new Date(ar, 0, 1)) / 86400000 + new Date(ar, 0, 1).getDay() + 1) / 7);
+  return uke > nowUke + 10 ? ar - 1 : ar;
+}
+
 async function lastArkiv() {
-  // Hent liste over filer i arkiv-mappen
   const resp = await fetch(GITHUB_API);
   if (!resp.ok) throw new Error('Kunne ikke hente arkivliste');
   const filer = await resp.json();
 
-  // Filtrer ut ukeplan-filer og sorter synkende (nyeste først)
-  const ukefiler = filer
+  ukefiler = filer
     .filter(f => f.name.startsWith('ukeplan_uke') && f.name.endsWith('.json'))
     .sort((a, b) => {
       const ukeA = parseInt(a.name.match(/\d+/)[0]);
@@ -89,62 +105,54 @@ async function lastArkiv() {
       return ukeB - ukeA;
     });
 
-  if (ukefiler.length === 0) {
-    document.getElementById('app').innerHTML = `
-      <div class="page-hero"><div class="page-hero-inner">
-        <div class="breadcrumb">8C – Skoleportal · Arkiv</div>
-        <div class="side-tittel">Ukeplan-arkiv</div>
-      </div></div>
-      <div class="arkiv-container"><div class="uke-kort"><div class="tom">Ingen arkiverte ukeplaner ennå.</div></div></div>`;
-    return;
-  }
-
-  // Hent alle ukeplaner parallelt
-  const ukeplaner = await Promise.all(
-    ukefiler.map(f => fetch(`${RAW_BASE}/${f.name}`).then(r => r.json()))
-  );
-
-  const ukenumre = ukeplaner.map(u => u.uke);
-
-  const ukeNav = `<div class="uke-nav" id="uke-nav">
-    ${ukenumre.map(u => `<a class="uke-nav-btn" href="#uke-${u}">Uke ${u}</a>`).join('')}
-  </div>`;
-
-  const innhold = ukeplaner.map(u => renderUkeplan(u)).join('');
+  const options = ukefiler.map(f => {
+    const uke = parseInt(f.name.match(/\d+/)[0]);
+    const ar = gjetteAar(uke);
+    return `<option value="${f.name}">Uke ${uke} &nbsp;·&nbsp; ${ukedatoer(uke, ar)}</option>`;
+  }).join('');
 
   document.getElementById('app').innerHTML = `
     <div class="page-hero">
       <div class="page-hero-inner">
         <div class="breadcrumb">8C – Skoleportal · Arkiv</div>
         <div class="side-tittel">Ukeplan-arkiv</div>
-        <div class="oppdatert">${ukeplaner.length} uker arkivert</div>
+        <div class="oppdatert">${ukefiler.length} uker arkivert</div>
       </div>
     </div>
-    ${ukeNav}
-    <div class="arkiv-container">${innhold}</div>
+    <div class="velg-uke-wrap">
+      <select class="velg-uke-select" id="uke-velger" onchange="visUke(this.value)">
+        <option value="">— Velg uke —</option>
+        ${options}
+      </select>
+    </div>
+    <div class="arkiv-container" id="ukeplan-innhold">
+      <div class="ingen-valgt">Velg en uke i menyen over for å se ukeplanen.</div>
+    </div>
   `;
+}
 
-  // Merk aktiv uke ved scroll
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const id = entry.target.id;
-        document.querySelectorAll('.uke-nav-btn').forEach(btn => {
-          btn.classList.toggle('aktiv', btn.getAttribute('href') === '#' + id);
-        });
-      }
-    });
-  }, { rootMargin: '-30% 0px -60% 0px' });
+async function visUke(filnavn) {
+  if (!filnavn) {
+    document.getElementById('ukeplan-innhold').innerHTML =
+      '<div class="ingen-valgt">Velg en uke i menyen over for å se ukeplanen.</div>';
+    return;
+  }
 
-  ukenumre.forEach(u => {
-    const el = document.getElementById('uke-' + u);
-    if (el) observer.observe(el);
-  });
+  document.getElementById('ukeplan-innhold').innerHTML = '<div class="laster">Laster ukeplan…</div>';
+
+  const resp = await fetch(`${RAW_BASE}/${filnavn}`);
+  const u = await resp.json();
+
+  document.getElementById('ukeplan-innhold').innerHTML = renderUkeplan(u);
 }
 
 function renderUkeplan(u) {
-  const meldinger = (u.meldinger || []).map(m => `<div class="melding">• ${m}</div>`).join('') || '<div class="melding">Ingen meldinger</div>';
-  const prover = (u.prover || []).map(p => `<span class="prove-tag">${p}</span>`).join('') || '<span style="color:var(--text-muted);font-size:0.88rem">Ingen prøver</span>';
+  const meldinger = (u.meldinger || []).map(m => `<div class="melding">• ${m}</div>`).join('')
+    || '<div class="melding" style="color:var(--text-muted)">Ingen meldinger</div>';
+
+  const prover = (u.prover || []).map(p => `<span class="prove-tag">${p}</span>`).join('')
+    || '<span style="color:var(--text-muted);font-size:0.88rem">Ingen prøver</span>';
+
   const lekser = (u.lekser || []).map(l => `
     <div class="lekse-rad">
       <div class="lekse-fag">${l.fag}</div>
@@ -154,13 +162,16 @@ function renderUkeplan(u) {
         <ul class="laringsmal-liste">
           ${l.laringsmal.map(lm => `<li>${lm}</li>`).join('')}
         </ul>` : ''}
-    </div>`).join('') || '<div style="color:var(--text-muted);font-size:0.88rem;padding:4px 0">Ingen lekser registrert</div>';
+    </div>`).join('')
+    || '<div style="color:var(--text-muted);font-size:0.88rem;padding:4px 0">Ingen lekser registrert</div>';
+
+  const ar = gjetteAar(u.uke);
 
   return `
-    <div class="uke-kort" id="uke-${u.uke}">
+    <div class="uke-kort">
       <div class="uke-header">
         <span>Uke ${u.uke}</span>
-        <span class="uke-dato">${u.oppdatert || ''}</span>
+        <span class="uke-dato">${ukedatoer(u.uke, ar)}</span>
       </div>
       <div class="seksjon">
         <div class="seksjon-tittel">Meldinger</div>
