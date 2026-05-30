@@ -77,7 +77,9 @@ function isoUke(dato) {
   return Math.ceil(((d - new Date(d.getFullYear(), 0, 1)) / 86400000 + 1) / 7);
 }
 
-const innevaerendeUke = isoUke(new Date());
+const dagIUken = new Date().getDay(); // 0=søndag, 6=lørdag
+const ukeOffset = (dagIUken === 0 || dagIUken === 6) ? 1 : 0;
+const innevaerendeUke = isoUke(new Date()) + ukeOffset;
 let visAlle = false;
 
 function render(data) {
