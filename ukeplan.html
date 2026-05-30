@@ -34,6 +34,14 @@
   .laringsmal { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
   .mal-tag { background: #fff1f2; color: var(--brand); font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
   .laster { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+
+  /* Uke-nav */
+  .uke-nav { position: sticky; top: 68px; z-index: 100; background: var(--white); border-bottom: 1px solid var(--border); padding: 10px 16px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .uke-nav-btn { font-size: 0.8rem; font-weight: 600; padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg); color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: inherit; }
+  .uke-nav-btn:hover { background: #fff1f2; color: var(--brand); border-color: var(--brand); }
+  .uke-nav-btn.aktiv { background: var(--brand); color: white; border-color: var(--brand); }
+
+  /* Hero */
   .page-hero { background: var(--brand-dark); color: white; padding: 24px 0 20px; position: relative; overflow: hidden; border-bottom: 4px solid rgba(255,255,255,0.08); }
   .page-hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(135deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 80px); pointer-events: none; }
   .page-hero-inner { max-width: 900px; margin: 0 auto; padding: 0 16px; position: relative; }
@@ -59,9 +67,8 @@
     </a>
     <ul class="nav-links">
       <li><a href="index.html" class="nav-btn">← Hjem</a></li>
-      <li><a href="#" class="nav-btn active" id="uke-knapp">Ukeplan</a></li>
+      <li><a href="#" class="nav-btn active">Ukeplan</a></li>
       <li><a href="proveplan.html" class="nav-btn">Prøveplan</a></li>
-      <li><a href="arkiv.html" class="nav-btn">Arkiv</a></li>
     </ul>
   </div>
 </nav>
@@ -95,10 +102,6 @@ function render(data) {
     : '';
 
   document.title = `8C Skoleportal · Ukeplan · Uke ${uke}`;
-
-  // Oppdater uke-knapp i nav
-  const ukeKnapp = document.getElementById('uke-knapp');
-  if (ukeKnapp) ukeKnapp.textContent = `Uke ${uke}`;
 
   const meldinger = (data.meldinger || []).length
     ? data.meldinger.map(m => `<div class="melding-item">${m}</div>`).join('')
@@ -137,6 +140,10 @@ function render(data) {
         <div class="breadcrumb">8C – Skoleportal · Ukeplan</div>
         <div class="uke-nr">Uke ${uke}<span>${oppdatert}</span></div>
       </div>
+    </div>
+    <div class="uke-nav">
+      <a class="uke-nav-btn aktiv" href="#">Uke ${uke}</a>
+      <a class="uke-nav-btn" href="arkiv.html">Arkiv →</a>
     </div>
     <div class="uk-container">
       <div class="to-kolonner">
