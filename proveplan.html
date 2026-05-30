@@ -14,10 +14,19 @@
   .uke-nav-btn { font-size: 0.8rem; font-weight: 600; padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg); color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.15s; font-family: inherit; }
   .uke-nav-btn:hover { background: #fff1f2; color: var(--brand); border-color: var(--brand); }
   .uke-nav-btn.aktiv { background: var(--brand); color: white; border-color: var(--brand); }
+  .uke-nav-btn.graaet { opacity: 0.4; }
+
+  /* Vis alle-knapp */
+  .vis-alle-wrap { text-align: center; padding: 0 16px; }
+  .vis-alle-btn { font-size: 0.8rem; font-weight: 600; padding: 6px 18px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg); color: var(--text-muted); cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .vis-alle-btn:hover { background: #fff1f2; color: var(--brand); border-color: var(--brand); }
 
   /* Ukegruppe */
-  .uke-gruppe { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; scroll-margin-top: 120px; }
+  .uke-gruppe { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; scroll-margin-top: 120px; transition: opacity 0.2s; }
+  .uke-gruppe.graaet { opacity: 0.4; }
+  .uke-gruppe.skjult { display: none; }
   .uke-header { background: var(--brand); color: white; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+  .uke-gruppe.graaet .uke-header { background: var(--text-muted); }
   .uke-header .uke-dato { font-weight: 400; opacity: 0.7; font-size: 0.72rem; font-family: 'DM Mono', monospace; }
 
   /* Prøve-rad */
@@ -26,6 +35,7 @@
   .prove-dag { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--text-muted); min-width: 72px; }
   .prove-fag { font-weight: 600; font-size: 0.95rem; flex: 1; }
   .prove-type { background: #fff1f2; color: var(--brand); font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .uke-gruppe.graaet .prove-type { background: var(--border); color: var(--text-muted); }
 
   .tom { padding: 20px 16px; color: var(--text-muted); font-style: italic; font-size: 0.9rem; }
   .laster { text-align: center; padding: 60px 20px; color: var(--text-muted); }
@@ -60,6 +70,16 @@
 <script>
 const JSON_URL = 'https://raw.githubusercontent.com/asandven/pus-portal/main/data/proveplan.json';
 
+function isoUke(dato) {
+  const d = new Date(dato);
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+  return Math.ceil(((d - new Date(d.getFullYear(), 0, 1)) / 86400000 + 1) / 7);
+}
+
+const innevaerendeUke = isoUke(new Date());
+let visAlle = false;
+
 function render(data) {
   const oppdatert = data.oppdatert
     ? new Date(data.oppdatert).toLocaleDateString('no-NO', {year:'numeric', month:'long', day:'numeric'})
@@ -71,21 +91,32 @@ function render(data) {
     grupper[p.uke].push(p);
   });
 
-  const uker = Object.keys(grupper).sort((a, b) => a - b);
+  const alleUker = Object.keys(grupper).sort((a, b) => a - b);
+  const fremtidigeUker = alleUker.filter(u => parseInt(u) >= innevaerendeUke);
+  const gamleUker = alleUker.filter(u => parseInt(u) < innevaerendeUke);
 
-  const ukeNavKnapper = uker.map(uke =>
-    `<a class="uke-nav-btn" href="#uke-${uke}">Uke ${uke}</a>`
-  ).join('');
+  const uker = alleUker;
+
+  const ukeNavKnapper = uker.map(uke => {
+    const gammel = parseInt(uke) < innevaerendeUke;
+    return `<a class="uke-nav-btn${gammel ? ' graaet' : ''}" href="#uke-${uke}">Uke ${uke}</a>`;
+  }).join('');
 
   const ukeNav = uker.length > 1
     ? `<div class="uke-nav" id="uke-nav">${ukeNavKnapper}</div>`
     : '';
 
+  const visAlleKnapp = gamleUker.length > 0
+    ? `<div class="vis-alle-wrap"><button class="vis-alle-btn" id="vis-alle-btn" onclick="toggleVisAlle()">Vis tidligere uker</button></div>`
+    : '';
+
   const innhold = uker.length
-    ? uker.map(uke => `
-        <div class="uke-gruppe" id="uke-${uke}">
+    ? uker.map(uke => {
+        const gammel = parseInt(uke) < innevaerendeUke;
+        return `
+        <div class="uke-gruppe${gammel ? ' graaet skjult' : ''}" id="uke-${uke}">
           <div class="uke-header">
-            <span>Uke ${uke}</span>
+            <span>Uke ${uke}${gammel ? ' · Passert' : ''}</span>
           </div>
           ${grupper[uke].map(p => `
             <div class="prove-rad">
@@ -93,7 +124,8 @@ function render(data) {
               <div class="prove-fag">${p.fag}</div>
               <div class="prove-type">${p.type}</div>
             </div>`).join('')}
-        </div>`).join('')
+        </div>`;
+      }).join('')
     : '<div class="uke-gruppe"><div class="tom">Ingen prøver registrert.</div></div>';
 
   document.getElementById('app').innerHTML = `
@@ -105,7 +137,10 @@ function render(data) {
       </div>
     </div>
     ${ukeNav}
-    <div class="pp-container">${innhold}</div>
+    <div class="pp-container">
+      ${visAlleKnapp}
+      ${innhold}
+    </div>
   `;
 
   // Merk aktiv uke ved scroll
@@ -126,6 +161,15 @@ function render(data) {
       if (el) observer.observe(el);
     });
   }
+}
+
+function toggleVisAlle() {
+  visAlle = !visAlle;
+  document.querySelectorAll('.uke-gruppe.graaet').forEach(el => {
+    el.classList.toggle('skjult', !visAlle);
+  });
+  const btn = document.getElementById('vis-alle-btn');
+  if (btn) btn.textContent = visAlle ? 'Skjul tidligere uker' : 'Vis tidligere uker';
 }
 
 fetch(JSON_URL).then(r => r.json()).then(render)
