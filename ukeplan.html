@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="style.css">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  /* Ukeplan-spesifikt */
   .uk-container { max-width: 900px; margin: 0 auto; padding: 24px 16px 40px; display: flex; flex-direction: column; gap: 16px; }
   .kort { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border); }
   .kort-tittel { background: var(--brand); color: white; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 10px 16px; }
@@ -35,7 +34,6 @@
   .laringsmal { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
   .mal-tag { background: #fff1f2; color: var(--brand); font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
   .laster { text-align: center; padding: 60px 20px; color: var(--text-muted); }
-  /* Hero */
   .page-hero { background: var(--brand-dark); color: white; padding: 24px 0 20px; position: relative; overflow: hidden; border-bottom: 4px solid rgba(255,255,255,0.08); }
   .page-hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(135deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 80px); pointer-events: none; }
   .page-hero-inner { max-width: 900px; margin: 0 auto; padding: 0 16px; position: relative; }
@@ -53,7 +51,6 @@
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="top-bar">
   <div class="nav-container">
     <a class="brand" href="index.html">
@@ -62,8 +59,9 @@
     </a>
     <ul class="nav-links">
       <li><a href="index.html" class="nav-btn">← Hjem</a></li>
-      <li><a href="#" class="nav-btn active">Ukeplan</a></li>
+      <li><a href="#" class="nav-btn active" id="uke-knapp">Ukeplan</a></li>
       <li><a href="proveplan.html" class="nav-btn">Prøveplan</a></li>
+      <li><a href="arkiv.html" class="nav-btn">Arkiv</a></li>
     </ul>
   </div>
 </nav>
@@ -97,6 +95,10 @@ function render(data) {
     : '';
 
   document.title = `8C Skoleportal · Ukeplan · Uke ${uke}`;
+
+  // Oppdater uke-knapp i nav
+  const ukeKnapp = document.getElementById('uke-knapp');
+  if (ukeKnapp) ukeKnapp.textContent = `Uke ${uke}`;
 
   const meldinger = (data.meldinger || []).length
     ? data.meldinger.map(m => `<div class="melding-item">${m}</div>`).join('')
