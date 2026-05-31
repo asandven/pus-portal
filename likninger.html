@@ -9,37 +9,41 @@
 <style>
   * { box-sizing: border-box; }
 
-  .lk-wrap { max-width: 520px; margin: 0 auto; padding: 24px 16px 60px; }
-
-  /* Hero */
-  .lk-hero { background: var(--brand-dark); color: white; padding: 20px 0 16px; margin-bottom: 0; border-bottom: 4px solid rgba(255,255,255,0.08); }
-  .lk-hero-inner { max-width: 520px; margin: 0 auto; padding: 0 16px; }
+  .lk-hero { background: var(--brand-dark); color: white; padding: 20px 0 16px; border-bottom: 4px solid rgba(255,255,255,0.08); }
+  .lk-hero-inner { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
   .lk-hero .breadcrumb { font-size: 0.72rem; font-weight: 600; opacity: 0.55; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; }
   .lk-hero .tittel { font-size: 1.8rem; font-weight: 700; line-height: 1; }
 
-  /* Kort */
-  .lk-kort { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); padding: 24px; margin-top: 24px; }
-
-  /* Innlogging */
-  .lk-felt { margin-bottom: 16px; }
-  .lk-felt label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
-  .lk-felt input { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; font-family: inherit; background: var(--bg); color: var(--text); }
-  .lk-felt input:focus { outline: none; border-color: var(--brand); }
-  .lk-btn { width: 100%; padding: 12px; background: var(--brand); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; font-family: inherit; cursor: pointer; margin-top: 8px; }
-  .lk-btn:hover { opacity: 0.9; }
-  .lk-btn-sek { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
-  .lk-feil { color: var(--brand); font-size: 0.85rem; margin-top: 8px; }
-
-  /* Nivå-bar */
   .niva-bar { background: var(--white); border-bottom: 1px solid var(--border); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; }
   .niva-badge { background: var(--brand); color: white; padding: 3px 12px; border-radius: 20px; font-weight: 700; font-size: 0.78rem; }
-  .niva-navn { color: var(--text-muted); }
-  .niva-variant { font-family: 'DM Mono', monospace; font-weight: 600; color: var(--brand); }
+  .niva-navn { color: var(--text-muted); margin-left: 8px; }
   .rette-rad { display: flex; gap: 6px; }
   .rette-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--border); background: var(--bg); }
   .rette-dot.fylt { background: #22c55e; border-color: #22c55e; }
+  .logg-ut-btn { background: none; border: none; color: var(--text-muted); font-size: 0.82rem; cursor: pointer; text-decoration: underline; font-family: inherit; }
 
-  /* Oppgave */
+  /* Tre-kolonne layout */
+  .tre-kol { max-width: 1200px; margin: 0 auto; padding: 20px 16px 60px; display: grid; grid-template-columns: 300px 1fr 260px; gap: 20px; align-items: start; }
+  @media (max-width: 900px) { .tre-kol { grid-template-columns: 1fr; } .kol-eksempel, .kol-prog { display: none; } }
+
+  .kort { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
+  .kort-hdr { background: var(--brand); color: white; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 10px 16px; }
+  .kort-body { padding: 16px; }
+
+  /* Eksempel-kolonne */
+  .eks-forklaring { font-size: 0.85rem; line-height: 1.6; margin-bottom: 16px; color: var(--text); }
+  .eks-steg { font-family: 'DM Mono', monospace; font-size: 0.95rem; }
+  .eks-grid { display: grid; grid-template-columns: 140px 12px 140px; gap: 4px 0; align-items: center; line-height: 2; }
+  .eks-eq { color: var(--text-muted); text-align: center; }
+  .eks-op { color: #dc2626; font-weight: 600; }
+  .eks-svar { border-top: 1.5px solid var(--border); padding-top: 6px; font-weight: 600; }
+  .eks-brok { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; }
+  .eks-brok-strek { border-top: 1.5px solid #dc2626; width: 100%; display: block; }
+  .eks-brok span { color: #dc2626; font-weight: 600; font-size: 0.85rem; }
+  .eks-tittel { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin: 16px 0 8px; }
+  .eks-regel { background: var(--bg); border-left: 3px solid var(--brand); padding: 8px 12px; font-size: 0.82rem; border-radius: 0 6px 6px 0; margin-bottom: 12px; line-height: 1.5; }
+
+  /* Oppgave-kolonne */
   .oppgave-tekst { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; font-style: italic; }
   .oppgave-likning { font-family: 'DM Mono', monospace; font-size: 1.6rem; font-weight: 500; margin: 16px 0; text-align: center; padding: 16px; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); }
   .svar-wrap { display: flex; gap: 10px; margin-top: 16px; }
@@ -47,14 +51,10 @@
   .svar-input:focus { outline: none; border-color: var(--brand); }
   .svar-btn { padding: 12px 20px; background: var(--brand); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; font-family: inherit; cursor: pointer; }
   .hint-btn { padding: 12px 16px; background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); border-radius: 8px; font-size: 0.85rem; font-family: inherit; cursor: pointer; }
-
-  /* Tilbakemelding */
   .tilbake { padding: 14px 16px; border-radius: 8px; margin-top: 16px; font-weight: 600; font-size: 0.95rem; }
   .tilbake.riktig { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
   .tilbake.feil { background: #fff1f2; color: var(--brand); border: 1px solid #fecdd3; }
   .tilbake.hint-vis { background: var(--bg); color: var(--text); border: 1px solid var(--border); font-weight: 400; }
-
-  /* Løsningssteg */
   .steg-wrap { margin-top: 16px; }
   .steg-tittel { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
   .steg-grid { display: grid; grid-template-columns: 1fr 16px 1fr; gap: 6px 0; align-items: center; font-family: 'DM Mono', monospace; font-size: 1rem; line-height: 2; }
@@ -64,16 +64,31 @@
   .steg-brok { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; }
   .steg-brok-strek { border-top: 1.5px solid #dc2626; width: 100%; display: block; }
   .steg-brok span { color: #dc2626; font-weight: 600; }
-
-  /* Melding nivå-opp */
   .niva-opp-melding { background: var(--brand); color: white; padding: 16px; border-radius: 8px; text-align: center; font-weight: 600; margin-top: 16px; }
+  .profil-bar { font-size: 0.82rem; color: var(--text-muted); margin-top: 12px; }
+  .lk-btn { width: 100%; padding: 12px; background: var(--brand); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; font-family: inherit; cursor: pointer; margin-top: 8px; }
+  .lk-btn-sek { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+  .lk-felt { margin-bottom: 16px; }
+  .lk-felt label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .lk-felt input { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; font-family: inherit; background: var(--bg); color: var(--text); }
+  .lk-felt input:focus { outline: none; border-color: var(--brand); }
+  .lk-feil { color: var(--brand); font-size: 0.85rem; margin-top: 8px; }
 
-  /* Profil */
-  .profil-bar { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; font-size: 0.82rem; color: var(--text-muted); }
-  .logg-ut-btn { background: none; border: none; color: var(--text-muted); font-size: 0.82rem; cursor: pointer; text-decoration: underline; font-family: inherit; }
+  /* Progresjon-kolonne */
+  .prog-niva { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+  .prog-niva:last-child { border-bottom: none; }
+  .prog-badge { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; min-width: 52px; text-align: center; }
+  .prog-badge.fullfort { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
+  .prog-badge.aktiv { background: var(--brand); color: white; }
+  .prog-badge.ikke-start { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+  .prog-navn { color: var(--text-muted); font-size: 0.78rem; flex: 1; }
+  .prog-variant { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text-muted); }
 
   .laster { text-align: center; padding: 40px; color: var(--text-muted); }
   .skjult { display: none; }
+
+  /* Innlogging sentrert */
+  .inn-wrap { max-width: 440px; margin: 40px auto; padding: 0 16px; }
 </style>
 </head>
 <body>
@@ -99,42 +114,47 @@
 </div>
 
 <!-- INNLOGGING -->
-<div id="side-innlogging" class="lk-wrap">
-  <div class="lk-kort">
-    <h2 style="margin:0 0 20px; font-size:1.1rem;">Logg inn</h2>
-    <div class="lk-felt">
-      <label>Brukernavn</label>
-      <input type="text" id="inn-bruker" placeholder="f.eks. 12C01" autocomplete="username" />
+<div id="side-innlogging">
+  <div class="inn-wrap">
+    <div class="kort" style="margin-bottom:16px;">
+      <div class="kort-hdr">Logg inn</div>
+      <div class="kort-body">
+        <div class="lk-felt">
+          <label>Brukernavn</label>
+          <input type="text" id="inn-bruker" placeholder="f.eks. 12C01" autocomplete="username" />
+        </div>
+        <div class="lk-felt">
+          <label>Passord</label>
+          <input type="password" id="inn-passord" placeholder="Passord" autocomplete="current-password" />
+        </div>
+        <div id="inn-feil" class="lk-feil skjult"></div>
+        <button class="lk-btn" onclick="loggInn()">Logg inn</button>
+      </div>
     </div>
-    <div class="lk-felt">
-      <label>Passord</label>
-      <input type="password" id="inn-passord" placeholder="Passord" autocomplete="current-password" />
+    <div class="kort">
+      <div class="kort-hdr">Første gang?</div>
+      <div class="kort-body">
+        <p style="font-size:0.85rem; color:var(--text-muted); margin:0 0 16px;">Skriv brukernavn og velg passord øverst, bekreft her.</p>
+        <div class="lk-felt">
+          <label>Bekreft passord</label>
+          <input type="password" id="reg-passord2" placeholder="Skriv passordet en gang til" autocomplete="new-password" />
+        </div>
+        <div id="reg-feil" class="lk-feil skjult"></div>
+        <button class="lk-btn lk-btn-sek" onclick="registrer()">Opprett bruker</button>
+      </div>
     </div>
-    <div id="inn-feil" class="lk-feil skjult"></div>
-    <button class="lk-btn" onclick="loggInn()">Logg inn</button>
-  </div>
-
-  <div class="lk-kort" style="margin-top:16px;">
-    <h2 style="margin:0 0 8px; font-size:1rem;">Første gang?</h2>
-    <p style="font-size:0.85rem; color:var(--text-muted); margin:0 0 16px;">Velg et passord du husker. Brukernavn får du av læreren.</p>
-    <div class="lk-felt">
-      <label>Bekreft passord</label>
-      <input type="password" id="reg-passord2" placeholder="Skriv passordet en gang til" autocomplete="new-password" />
-    </div>
-    <div id="reg-feil" class="lk-feil skjult"></div>
-    <button class="lk-btn lk-btn-sek" onclick="registrer()">Opprett bruker</button>
   </div>
 </div>
 
-<!-- OPPGAVE -->
+<!-- OPPGAVE (tre kolonner) -->
 <div id="side-oppgave" class="skjult">
-  <div class="niva-bar" id="niva-bar">
+  <div class="niva-bar">
     <div>
       <span class="niva-badge" id="niva-badge">Nivå 1a</span>
-      <span class="niva-navn" id="niva-navn" style="margin-left:8px;"></span>
+      <span class="niva-navn" id="niva-navn"></span>
     </div>
     <div style="display:flex;align-items:center;gap:12px;">
-      <div class="rette-rad" id="rette-rad">
+      <div class="rette-rad">
         <div class="rette-dot" id="dot1"></div>
         <div class="rette-dot" id="dot2"></div>
         <div class="rette-dot" id="dot3"></div>
@@ -143,40 +163,218 @@
     </div>
   </div>
 
-  <div class="lk-wrap">
-    <div class="lk-kort">
-      <div id="oppgave-tekst" class="oppgave-tekst skjult"></div>
-      <div id="oppgave-likning" class="oppgave-likning laster">Henter oppgave…</div>
+  <div class="tre-kol">
 
-      <div class="svar-wrap">
-        <input type="text" id="svar-input" class="svar-input" placeholder="x = ?" onkeydown="if(event.key==='Enter')sjekkSvar()" />
-        <button class="svar-btn" onclick="sjekkSvar()">Sjekk</button>
-        <button class="hint-btn" onclick="visHint()">Hint</button>
-      </div>
-
-      <div id="tilbakemelding" class="skjult"></div>
-      <div id="steg-wrap" class="steg-wrap skjult"></div>
-      <div id="niva-opp-melding" class="niva-opp-melding skjult"></div>
-
-      <div style="margin-top:20px; text-align:right;">
-        <button id="neste-btn" class="lk-btn skjult" onclick="nesteOppgave()">Neste oppgave →</button>
+    <!-- VENSTRE: Eksempel -->
+    <div class="kol-eksempel">
+      <div class="kort">
+        <div class="kort-hdr" id="eks-hdr">Eksempel – Nivå 1</div>
+        <div class="kort-body" id="eks-body">
+          <div class="laster">Laster eksempel…</div>
+        </div>
       </div>
     </div>
 
-    <div class="profil-bar">
-      <span id="profil-tekst"></span>
+    <!-- MIDTEN: Oppgave -->
+    <div class="kol-oppgave">
+      <div class="kort">
+        <div class="kort-hdr">Oppgave</div>
+        <div class="kort-body">
+          <div id="oppgave-tekst" class="oppgave-tekst skjult"></div>
+          <div id="oppgave-likning" class="oppgave-likning laster">Henter oppgave…</div>
+          <div class="svar-wrap">
+            <input type="text" id="svar-input" class="svar-input" placeholder="x = ?" onkeydown="if(event.key==='Enter')sjekkSvar()" />
+            <button class="svar-btn" onclick="sjekkSvar()">Sjekk</button>
+            <button class="hint-btn" onclick="visHint()">Hint</button>
+          </div>
+          <div id="tilbakemelding" class="skjult"></div>
+          <div id="steg-wrap" class="steg-wrap skjult"></div>
+          <div id="niva-opp-melding" class="niva-opp-melding skjult"></div>
+          <div style="margin-top:20px; text-align:right;">
+            <button id="neste-btn" class="lk-btn skjult" onclick="nesteOppgave()">Neste oppgave →</button>
+          </div>
+          <div class="profil-bar"><span id="profil-tekst"></span></div>
+        </div>
+      </div>
     </div>
+
+    <!-- HØYRE: Progresjon -->
+    <div class="kol-prog">
+      <div class="kort">
+        <div class="kort-hdr">Fremgang</div>
+        <div class="kort-body" id="prog-body">
+          <div class="laster">…</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <script>
-const API = 'http://100.76.42.81:8780';
+const API = 'https://vitalize-subtext-preheated.ngrok-free.dev';
+const HDR = {'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true'};
+
 let bruker = null;
 let gjeldende = null;
 let hintBrukt = false;
 
+const NIVA_NAVN = {1:'Addisjon/subtraksjon',2:'Multiplikasjon/divisjon',3:'To steg',4:'x begge sider',5:'x høyre side',6:'Forenkle først',7:'Parentes én side',8:'Parentes begge sider',9:'Andregradslikning',10:'Alt blandet'};
+
+// ── Eksempler per nivå ───────────────────────────────────────────────────────
+const EKSEMPLER = {
+  1: {
+    regel: 'Du kan legge til eller trekke fra det samme på begge sider av likhetstegnet for å få x alene.',
+    steg: [
+      {type:'rad', v:'x + 7', e:'=', h:'15'},
+      {type:'rad', v:'x + 7 <span class="eks-op">− 7</span>', e:'=', h:'15 <span class="eks-op">− 7</span>'},
+      {type:'svar', v:'x', e:'=', h:'8'},
+    ]
+  },
+  2: {
+    regel: 'Del eller gang begge sider med det samme tallet for å få x alene. Bruk brøkstrek for divisjon.',
+    steg: [
+      {type:'rad', v:'3x', e:'=', h:'21'},
+      {type:'brok', teller:'3x', nevner:'3', e:'=', teller2:'21', nevner2:'3'},
+      {type:'svar', v:'x', e:'=', h:'7'},
+    ]
+  },
+  3: {
+    regel: 'To steg: (1) flytt tallene til én side, (2) del for å få x alene.',
+    steg: [
+      {type:'rad', v:'2x + 3', e:'=', h:'11'},
+      {type:'rad', v:'2x + 3 <span class="eks-op">− 3</span>', e:'=', h:'11 <span class="eks-op">− 3</span>'},
+      {type:'rad', v:'2x', e:'=', h:'8'},
+      {type:'brok', teller:'2x', nevner:'2', e:'=', teller2:'8', nevner2:'2'},
+      {type:'svar', v:'x', e:'=', h:'4'},
+    ]
+  },
+  4: {
+    regel: 'Flytt alle x-ledd til venstre side, alle talledd til høyre.',
+    steg: [
+      {type:'rad', v:'2x + 3', e:'=', h:'x + 8'},
+      {type:'rad', v:'2x + 3 <span class="eks-op">− x</span>', e:'=', h:'x + 8 <span class="eks-op">− x</span>'},
+      {type:'rad', v:'x + 3 <span class="eks-op">− 3</span>', e:'=', h:'8 <span class="eks-op">− 3</span>'},
+      {type:'svar', v:'x', e:'=', h:'5'},
+    ]
+  },
+  5: {
+    regel: 'Noen ganger er det lurere å samle x på høyre side for å unngå negativt x.',
+    steg: [
+      {type:'rad', v:'3 + x', e:'=', h:'2x − 4'},
+      {type:'rad', v:'3 + x <span class="eks-op">− x</span>', e:'=', h:'2x − 4 <span class="eks-op">− x</span>'},
+      {type:'rad', v:'3 <span class="eks-op">+ 4</span>', e:'=', h:'x − 4 <span class="eks-op">+ 4</span>'},
+      {type:'svar', v:'7', e:'=', h:'x  →  x = 7'},
+    ]
+  },
+  6: {
+    regel: 'Forenkle begge sider først — samle x-ledd og talledd — så løs som vanlig.',
+    steg: [
+      {type:'rad', v:'2x + 3 + x', e:'=', h:'5 + x − 2'},
+      {type:'rad', v:'<span class="eks-op">3x</span> + 3', e:'=', h:'x + <span class="eks-op">3</span>'},
+      {type:'rad', v:'3x + 3 <span class="eks-op">− x</span>', e:'=', h:'x + 3 <span class="eks-op">− x</span>'},
+      {type:'rad', v:'2x + 3 <span class="eks-op">− 3</span>', e:'=', h:'3 <span class="eks-op">− 3</span>'},
+      {type:'brok', teller:'2x', nevner:'2', e:'=', teller2:'0', nevner2:'2'},
+      {type:'svar', v:'x', e:'=', h:'0'},
+    ]
+  },
+  7: {
+    regel: 'Multipliser inn i parentesen først, så løs som nivå 3.',
+    steg: [
+      {type:'rad', v:'2(x + 4)', e:'=', h:'16'},
+      {type:'rad', v:'<span class="eks-op">2x + 8</span>', e:'=', h:'16'},
+      {type:'rad', v:'2x + 8 <span class="eks-op">− 8</span>', e:'=', h:'16 <span class="eks-op">− 8</span>'},
+      {type:'brok', teller:'2x', nevner:'2', e:'=', teller2:'8', nevner2:'2'},
+      {type:'svar', v:'x', e:'=', h:'4'},
+    ]
+  },
+  8: {
+    regel: 'Multipliser inn i begge parentesene, så løs som nivå 4.',
+    steg: [
+      {type:'rad', v:'2(x + 3)', e:'=', h:'3(x − 1)'},
+      {type:'rad', v:'<span class="eks-op">2x + 6</span>', e:'=', h:'<span class="eks-op">3x − 3</span>'},
+      {type:'rad', v:'2x + 6 <span class="eks-op">− 2x</span>', e:'=', h:'3x − 3 <span class="eks-op">− 2x</span>'},
+      {type:'rad', v:'6 <span class="eks-op">+ 3</span>', e:'=', h:'x − 3 <span class="eks-op">+ 3</span>'},
+      {type:'svar', v:'9', e:'=', h:'x  →  x = 9'},
+    ]
+  },
+  9: {
+    regel: 'Ta kvadratroten av begge sider. Husk: det er alltid to løsninger, én positiv og én negativ!',
+    steg: [
+      {type:'rad', v:'x²', e:'=', h:'49'},
+      {type:'rad', v:'<span class="eks-op">√x²</span>', e:'=', h:'<span class="eks-op">√49</span>'},
+      {type:'svar', v:'x', e:'=', h:'±7'},
+    ]
+  },
+  10: {
+    regel: 'Alt kan komme! Bruk de reglene du har lært: forenkle, flytt x, del med koeffisient.',
+    steg: [
+      {type:'rad', v:'3(x + 2) + x', e:'=', h:'2x + 12'},
+      {type:'rad', v:'3x + 6 + x', e:'=', h:'2x + 12'},
+      {type:'rad', v:'4x + 6 <span class="eks-op">− 2x</span>', e:'=', h:'2x + 12 <span class="eks-op">− 2x</span>'},
+      {type:'rad', v:'2x + 6 <span class="eks-op">− 6</span>', e:'=', h:'12 <span class="eks-op">− 6</span>'},
+      {type:'brok', teller:'2x', nevner:'2', e:'=', teller2:'6', nevner2:'2'},
+      {type:'svar', v:'x', e:'=', h:'3'},
+    ]
+  }
+};
+
+function byggEksempel(niva) {
+  const eks = EKSEMPLER[niva] || EKSEMPLER[1];
+  let html = `<div class="eks-regel">${eks.regel}</div>`;
+  html += '<div class="eks-tittel">Eksempel</div>';
+  html += '<div class="eks-steg"><div class="eks-grid">';
+  for (const s of eks.steg) {
+    if (s.type === 'brok') {
+      html += `<span><span class="eks-brok"><span>${s.teller}</span><span class="eks-brok-strek"></span><span>${s.nevner}</span></span></span>`;
+      html += `<span class="eks-eq">=</span>`;
+      html += `<span><span class="eks-brok"><span>${s.teller2}</span><span class="eks-brok-strek"></span><span>${s.nevner2}</span></span></span>`;
+    } else if (s.type === 'svar') {
+      html += `<span class="eks-svar">${s.v}</span><span class="eks-eq eks-svar">=</span><span class="eks-svar">${s.h}</span>`;
+    } else {
+      html += `<span>${s.v}</span><span class="eks-eq">=</span><span>${s.h}</span>`;
+    }
+  }
+  html += '</div></div>';
+  return html;
+}
+
+function oppdaterEksempel(niva) {
+  document.getElementById('eks-hdr').textContent = `Eksempel – Nivå ${niva}`;
+  document.getElementById('eks-body').innerHTML = byggEksempel(niva);
+}
+
+// ── Progresjon ───────────────────────────────────────────────────────────────
+function byggProgresjon() {
+  if (!bruker) return;
+  const niva = bruker.niva;
+  const variant = bruker.variant;
+  const variantNr = {a:1, b:2, c:3, d:4};
+  const vNr = variantNr[variant] || 1;
+
+  let html = '';
+  for (let n = 1; n <= 10; n++) {
+    const maxV = n <= 6 ? ['a','b','c','d'] : ['a','b','c'];
+    let status, vistVariant;
+    if (n < niva) {
+      status = 'fullfort'; vistVariant = n <= 6 ? 'd' : 'c';
+    } else if (n === niva) {
+      status = 'aktiv'; vistVariant = variant;
+    } else {
+      status = 'ikke-start'; vistVariant = 'a';
+    }
+    const etikett = n < niva ? '✓' : n === niva ? `${n}${vistVariant}` : `${n}`;
+    html += `<div class="prog-niva">
+      <span class="prog-badge ${status}">${etikett}</span>
+      <span class="prog-navn">${NIVA_NAVN[n]}</span>
+    </div>`;
+  }
+  document.getElementById('prog-body').innerHTML = html;
+}
+
+// ── Auth ─────────────────────────────────────────────────────────────────────
 function vis(id) {
-  ['side-innlogging', 'side-oppgave'].forEach(s => {
+  ['side-innlogging','side-oppgave'].forEach(s => {
     document.getElementById(s).classList.toggle('skjult', s !== id);
   });
 }
@@ -186,23 +384,18 @@ async function loggInn() {
   const p = document.getElementById('inn-passord').value.trim();
   const feil = document.getElementById('inn-feil');
   feil.classList.add('skjult');
-
   if (!b || !p) { feil.textContent = 'Fyll inn brukernavn og passord.'; feil.classList.remove('skjult'); return; }
-
   try {
-    const resp = await fetch(`${API}/likning/logginn`, {
-      method: 'POST', headers: {'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true'},
-      body: JSON.stringify({brukernavn: b, passord: p})
-    });
+    const resp = await fetch(`${API}/likning/logginn`, {method:'POST', headers:HDR, body:JSON.stringify({brukernavn:b, passord:p})});
     const data = await resp.json();
     if (!resp.ok) { feil.textContent = data.error || 'Feil brukernavn eller passord.'; feil.classList.remove('skjult'); return; }
     bruker = data;
     vis('side-oppgave');
     oppdaterNivaBar();
+    oppdaterEksempel(bruker.niva);
+    byggProgresjon();
     hentOppgave();
-  } catch(e) {
-    feil.textContent = 'Kunne ikke koble til server.'; feil.classList.remove('skjult');
-  }
+  } catch(e) { feil.textContent = 'Kunne ikke koble til server.'; feil.classList.remove('skjult'); }
 }
 
 async function registrer() {
@@ -211,22 +404,15 @@ async function registrer() {
   const p2 = document.getElementById('reg-passord2').value.trim();
   const feil = document.getElementById('reg-feil');
   feil.classList.add('skjult');
-
   if (!b || !p) { feil.textContent = 'Fyll inn brukernavn og passord øverst.'; feil.classList.remove('skjult'); return; }
   if (p !== p2) { feil.textContent = 'Passordene stemmer ikke overens.'; feil.classList.remove('skjult'); return; }
   if (p.length < 4) { feil.textContent = 'Passordet må være minst 4 tegn.'; feil.classList.remove('skjult'); return; }
-
   try {
-    const resp = await fetch(`${API}/likning/registrer`, {
-      method: 'POST', headers: {'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true'},
-      body: JSON.stringify({brukernavn: b, passord: p})
-    });
+    const resp = await fetch(`${API}/likning/registrer`, {method:'POST', headers:HDR, body:JSON.stringify({brukernavn:b, passord:p})});
     const data = await resp.json();
     if (!resp.ok) { feil.textContent = data.error || 'Kunne ikke opprette bruker.'; feil.classList.remove('skjult'); return; }
     await loggInn();
-  } catch(e) {
-    feil.textContent = 'Kunne ikke koble til server.'; feil.classList.remove('skjult');
-  }
+  } catch(e) { feil.textContent = 'Kunne ikke koble til server.'; feil.classList.remove('skjult'); }
 }
 
 function loggUt() {
@@ -239,17 +425,14 @@ function loggUt() {
 function oppdaterNivaBar() {
   if (!bruker) return;
   document.getElementById('niva-badge').textContent = `Nivå ${bruker.niva}${bruker.variant}`;
-  const navn = {1:'Addisjon/subtraksjon',2:'Multiplikasjon/divisjon',3:'To steg',4:'x begge sider',5:'x høyre side',6:'Forenkle først',7:'Parentes én side',8:'Parentes begge sider',9:'Andregradslikning',10:'Alt blandet'};
-  document.getElementById('niva-navn').textContent = navn[bruker.niva] || '';
-  for (let i = 1; i <= 3; i++) {
-    document.getElementById(`dot${i}`).classList.toggle('fylt', i <= bruker.rette_paa_rad);
-  }
+  document.getElementById('niva-navn').textContent = NIVA_NAVN[bruker.niva] || '';
+  for (let i = 1; i <= 3; i++) document.getElementById(`dot${i}`).classList.toggle('fylt', i <= bruker.rette_paa_rad);
   document.getElementById('profil-tekst').textContent = `${bruker.brukernavn} · ${bruker.totalt_rette} rette / ${bruker.totalt_feil} feil`;
 }
 
+// ── Oppgave ──────────────────────────────────────────────────────────────────
 async function hentOppgave() {
-  hintBrukt = false;
-  gjeldende = null;
+  hintBrukt = false; gjeldende = null;
   document.getElementById('oppgave-likning').textContent = 'Henter oppgave…';
   document.getElementById('oppgave-likning').classList.add('laster');
   document.getElementById('oppgave-tekst').classList.add('skjult');
@@ -259,16 +442,10 @@ async function hentOppgave() {
   document.getElementById('neste-btn').classList.add('skjult');
   document.getElementById('svar-input').value = '';
   document.getElementById('svar-input').disabled = false;
-
   try {
-    const resp = await fetch(`${API}/likning/oppgave`, {
-      method: 'POST', headers: {'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true'},
-      body: JSON.stringify({brukernavn: bruker.brukernavn, niva: bruker.niva, variant: bruker.variant})
-    });
+    const resp = await fetch(`${API}/likning/oppgave`, {method:'POST', headers:HDR, body:JSON.stringify({brukernavn:bruker.brukernavn, niva:bruker.niva, variant:bruker.variant})});
     gjeldende = await resp.json();
-
     document.getElementById('oppgave-likning').classList.remove('laster');
-
     if (gjeldende.tekst) {
       document.getElementById('oppgave-tekst').textContent = gjeldende.tekst;
       document.getElementById('oppgave-tekst').classList.remove('skjult');
@@ -280,18 +457,14 @@ async function hentOppgave() {
       document.getElementById('oppgave-likning').style.fontSize = '1.6rem';
       document.getElementById('oppgave-likning').style.color = 'var(--text)';
     }
-
     document.getElementById('svar-input').focus();
-  } catch(e) {
-    document.getElementById('oppgave-likning').textContent = 'Feil — prøv igjen.';
-  }
+  } catch(e) { document.getElementById('oppgave-likning').textContent = 'Feil — prøv igjen.'; }
 }
 
 async function sjekkSvar() {
   if (!gjeldende) return;
-  const input = document.getElementById('svar-input').value.trim().replace(',', '.').replace('x=','').replace('x =','').trim();
+  const input = document.getElementById('svar-input').value.trim().replace(',','.').replace(/x\s*=/,'').trim();
   const tilbake = document.getElementById('tilbakemelding');
-
   let riktig = false;
   if (Array.isArray(gjeldende.svar)) {
     const tall = parseFloat(input);
@@ -299,90 +472,62 @@ async function sjekkSvar() {
   } else {
     riktig = parseFloat(input) === gjeldende.svar;
   }
-
   tilbake.className = 'tilbake ' + (riktig ? 'riktig' : 'feil');
-  tilbake.textContent = riktig ? '✓ Riktig! Bra jobbet!' : `✗ Ikke helt riktig. Prøv igjen eller se hint.`;
+  tilbake.textContent = riktig ? '✓ Riktig! Bra jobbet!' : '✗ Ikke helt riktig. Prøv igjen eller se hint.';
   tilbake.classList.remove('skjult');
-
-  if (riktig) {
-    document.getElementById('svar-input').disabled = true;
-    visSteg();
-    document.getElementById('neste-btn').classList.remove('skjult');
-  }
-
-  const resp = await fetch(`${API}/likning/svar`, {
-    method: 'POST', headers: {'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true'},
-    body: JSON.stringify({brukernavn: bruker.brukernavn, riktig, hint_brukt: hintBrukt})
-  });
-  const data = await resp.json();
-  bruker.niva = data.niva;
-  bruker.variant = data.variant;
-  bruker.rette_paa_rad = data.rette_paa_rad;
-  bruker.totalt_rette = data.totalt_rette;
-  bruker.totalt_feil = data.totalt_feil;
-  oppdaterNivaBar();
-
-  if (data.melding && (data.niva_opp || data.variant_opp)) {
-    const m = document.getElementById('niva-opp-melding');
-    m.textContent = data.melding;
-    m.classList.remove('skjult');
-  }
+  if (riktig) { document.getElementById('svar-input').disabled = true; visSteg(); document.getElementById('neste-btn').classList.remove('skjult'); }
+  try {
+    const resp = await fetch(`${API}/likning/svar`, {method:'POST', headers:HDR, body:JSON.stringify({brukernavn:bruker.brukernavn, riktig, hint_brukt:hintBrukt})});
+    const data = await resp.json();
+    bruker.niva = data.niva; bruker.variant = data.variant; bruker.rette_paa_rad = data.rette_paa_rad;
+    bruker.totalt_rette = data.totalt_rette; bruker.totalt_feil = data.totalt_feil;
+    oppdaterNivaBar();
+    byggProgresjon();
+    if (data.niva_opp) oppdaterEksempel(data.niva);
+    if (data.melding && (data.niva_opp || data.variant_opp)) {
+      const m = document.getElementById('niva-opp-melding');
+      m.textContent = data.melding; m.classList.remove('skjult');
+    }
+  } catch(e) {}
 }
 
 function visHint() {
   if (!gjeldende || !gjeldende.steg) return;
   hintBrukt = true;
-  const tilbake = document.getElementById('tilbakemelding');
   const forste = gjeldende.steg[0];
+  const tilbake = document.getElementById('tilbakemelding');
   tilbake.className = 'tilbake hint-vis';
-  tilbake.textContent = `Hint: ${forste.hwa || forste.hva ? 'Prøv å gjøre ' + (forste.hva || '') + ' på begge sider.' : 'Se på første steg i løsningen.'}`;
+  tilbake.textContent = forste.hva ? `Hint: Prøv å gjøre ${forste.hva} på begge sider.` : 'Hint: Se eksempelet til venstre.';
   tilbake.classList.remove('skjult');
 }
 
 function visSteg() {
   if (!gjeldende || !gjeldende.steg) return;
   const wrap = document.getElementById('steg-wrap');
-
   let html = '<div class="steg-tittel">Løsning</div><div class="steg-grid">';
-
-  const steg = gjeldende.steg;
-  for (let i = 0; i < steg.length; i++) {
-    const s = steg[i];
+  for (const s of gjeldende.steg) {
     const erSvar = s.type === 'svar';
-    const klasse = erSvar ? 'steg-svar-linje' : '';
-
+    const kl = erSvar ? 'steg-svar-linje' : '';
     if (s.type === 'divisjon_brok') {
-      const deler = s.fra.split('/');
-      const teller = deler[0] || s.fra;
       const nevner = s.hva.replace('÷','').trim();
-      html += `<span class="${klasse}"><span class="steg-brok"><span>${teller}</span><span class="steg-brok-strek"></span><span>${nevner}</span></span></span>`;
-      html += `<span class="steg-eq ${klasse}">=</span>`;
-      const deler2 = s.til.split('/');
-      const teller2 = deler2[0] || s.til;
-      html += `<span class="${klasse}"><span class="steg-brok"><span>${teller2}</span><span class="steg-brok-strek"></span><span>${nevner}</span></span></span>`;
+      html += `<span class="${kl}"><span class="steg-brok"><span>${s.fra}</span><span class="steg-brok-strek"></span><span>${nevner}</span></span></span>`;
+      html += `<span class="steg-eq ${kl}">=</span>`;
+      html += `<span class="${kl}"><span class="steg-brok"><span>${s.til}</span><span class="steg-brok-strek"></span><span>${nevner}</span></span></span>`;
     } else {
-      const venstre = s.hva ? `${s.fra} <span class="steg-op">${s.hva}</span>` : `<strong>${s.fra}</strong>`;
-      const hoyre = s.hva ? `${s.til.split(s.hva)[0] || s.til} <span class="steg-op">${s.hva}</span>` : `<strong>${s.til}</strong>`;
-      html += `<span class="${klasse}">${venstre}</span>`;
-      html += `<span class="steg-eq ${klasse}">=</span>`;
-      html += `<span class="${klasse}">${erSvar ? '<strong>' + s.til + '</strong>' : hoyre}</span>`;
+      const v = s.hva ? `${s.fra} <span class="steg-op">${s.hva}</span>` : `<strong>${s.fra}</strong>`;
+      const h = erSvar ? `<strong>${s.til}</strong>` : (s.hva ? `${s.til} <span class="steg-op">${s.hva}</span>` : `<strong>${s.til}</strong>`);
+      html += `<span class="${kl}">${v}</span><span class="steg-eq ${kl}">=</span><span class="${kl}">${h}</span>`;
     }
   }
-
   html += '</div>';
   wrap.innerHTML = html;
   wrap.classList.remove('skjult');
 }
 
-function nesteOppgave() {
-  hentOppgave();
-}
+function nesteOppgave() { hentOppgave(); }
 
-// Enter på innlogging
 document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !document.getElementById('side-innlogging').classList.contains('skjult')) {
-    loggInn();
-  }
+  if (e.key === 'Enter' && !document.getElementById('side-innlogging').classList.contains('skjult')) loggInn();
 });
 </script>
 </body>
