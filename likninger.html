@@ -258,7 +258,20 @@ async function loggInn(){
   try{
     const resp=await fetch(`${API}/likning/logginn`,{method:'POST',headers:HDR,body:JSON.stringify({brukernavn:b,passord:p})});
     const data=await resp.json();
-    if(!resp.ok){feil.textContent=data.error||'Feil brukernavn eller passord.';feil.classList.remove('skjult');return;}
+    if(!resp.ok){
+      if(data.error==='ingen_passord'){
+        // Bruker finnes men har ikke passord — vis opprett-seksjon
+        feil.textContent='Første gang? Opprett passordet ditt nedenfor.';
+        feil.style.color='#15803d';
+        feil.classList.remove('skjult');
+        document.getElementById('reg-passord2').focus();
+        return;
+      }
+      feil.textContent=data.error||'Feil brukernavn eller passord.';
+      feil.style.color='var(--brand)';
+      feil.classList.remove('skjult');
+      return;
+    }
     bruker=data;vis('side-oppgave');oppdaterNivaBar();oppdaterEksempel(bruker.niva);byggProgresjon();hentOppgave();
   }catch(e){feil.textContent='Kunne ikke koble til server.';feil.classList.remove('skjult');}
 }
