@@ -84,6 +84,9 @@
   .prog-navn { color: var(--text-muted); font-size: 0.78rem; flex: 1; }
   .prog-variant { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text-muted); }
 
+  .likning-input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 1.1rem; font-family: 'DM Mono', monospace; text-align: center; background: var(--bg); color: var(--text); margin-top: 8px; }
+  .likning-input:focus { outline: none; border-color: var(--brand); }
+  .likning-label { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 16px; display: block; }
   .laster { text-align: center; padding: 40px; color: var(--text-muted); }
   .skjult { display: none; }
 
@@ -182,6 +185,11 @@
         <div class="kort-body">
           <div id="oppgave-tekst" class="oppgave-tekst skjult"></div>
           <div id="oppgave-likning" class="oppgave-likning laster">Henter oppgave…</div>
+          <div id="likning-input-wrap" class="skjult">
+            <label class="likning-label">Skriv likningen din</label>
+            <input type="text" id="likning-input" class="likning-input" placeholder="f.eks. x − 45 = 78" />
+            <div id="likning-tilbake" class="skjult" style="margin-top:8px; font-size:0.85rem;"></div>
+          </div>
           <div class="svar-wrap">
             <input type="text" id="svar-input" class="svar-input" placeholder="x = ?" onkeydown="if(event.key==='Enter')sjekkSvar()" />
             <button class="svar-btn" onclick="sjekkSvar()">Sjekk</button>
@@ -432,6 +440,7 @@ function oppdaterNivaBar() {
 
 // ── Oppgave ──────────────────────────────────────────────────────────────────
 async function hentOppgave() {
+  const forrigeOppgave = gjeldende?.oppgave || '';
   hintBrukt = false; gjeldende = null;
   document.getElementById('oppgave-likning').textContent = 'Henter oppgave…';
   document.getElementById('oppgave-likning').classList.add('laster');
@@ -440,10 +449,13 @@ async function hentOppgave() {
   document.getElementById('steg-wrap').classList.add('skjult');
   document.getElementById('niva-opp-melding').classList.add('skjult');
   document.getElementById('neste-btn').classList.add('skjult');
+  document.getElementById('likning-input-wrap').classList.add('skjult');
+  document.getElementById('likning-input').value = '';
+  document.getElementById('likning-tilbake').classList.add('skjult');
   document.getElementById('svar-input').value = '';
   document.getElementById('svar-input').disabled = false;
   try {
-    const resp = await fetch(`${API}/likning/oppgave`, {method:'POST', headers:HDR, body:JSON.stringify({brukernavn:bruker.brukernavn, niva:bruker.niva, variant:bruker.variant})});
+    const resp = await fetch(`${API}/likning/oppgave`, {method:'POST', headers:HDR, body:JSON.stringify({brukernavn:bruker.brukernavn, niva:bruker.niva, variant:bruker.variant, forrige_oppgave:forrigeOppgave})});
     gjeldende = await resp.json();
     document.getElementById('oppgave-likning').classList.remove('laster');
     if (gjeldende.tekst) {
@@ -452,6 +464,7 @@ async function hentOppgave() {
       document.getElementById('oppgave-likning').textContent = 'Sett opp likningen og løs den:';
       document.getElementById('oppgave-likning').style.fontSize = '1rem';
       document.getElementById('oppgave-likning').style.color = 'var(--text-muted)';
+      document.getElementById('likning-input-wrap').classList.remove('skjult');
     } else {
       document.getElementById('oppgave-likning').textContent = gjeldende.oppgave;
       document.getElementById('oppgave-likning').style.fontSize = '1.6rem';
@@ -463,6 +476,27 @@ async function hentOppgave() {
 
 async function sjekkSvar() {
   if (!gjeldende) return;
+
+  // Valider likning for d-variant
+  if (gjeldende.tekst) {
+    const likningElev = document.getElementById('likning-input').value.trim();
+    if (!likningElev) {
+      const lt = document.getElementById('likning-tilbake');
+      lt.textContent = 'Skriv likningen din før du svarer!';
+      lt.style.color = 'var(--brand)';
+      lt.classList.remove('skjult');
+      return;
+    }
+    const vResp = await fetch(`${API}/likning/valider`, {method:'POST', headers:HDR,
+      body:JSON.stringify({likning:likningElev, fasit:gjeldende.oppgave})});
+    const vData = await vResp.json();
+    const lt = document.getElementById('likning-tilbake');
+    lt.textContent = vData.riktig ? '✓ ' + vData.tilbakemelding : '✗ ' + vData.tilbakemelding;
+    lt.style.color = vData.riktig ? '#15803d' : 'var(--brand)';
+    lt.classList.remove('skjult');
+    if (!vData.riktig) return;
+  }
+
   const input = document.getElementById('svar-input').value.trim().replace(',','.').replace(/x\s*=/,'').trim();
   const tilbake = document.getElementById('tilbakemelding');
   let riktig = false;
