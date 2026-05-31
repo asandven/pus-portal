@@ -315,9 +315,7 @@ async function hentOppgave(){
     if(gjeldende.tekst){
       document.getElementById('oppgave-tekst').textContent=gjeldende.tekst;
       document.getElementById('oppgave-tekst').classList.remove('skjult');
-      document.getElementById('oppgave-likning').innerHTML='Sett opp likningen og løs den: <span style="font-size:0.82rem;font-weight:400;">(bruk / som brøkstrek)</span>';
-      document.getElementById('oppgave-likning').style.fontSize='1rem';
-      document.getElementById('oppgave-likning').style.color='var(--text-muted)';
+      document.getElementById('oppgave-likning').classList.add('skjult');
       document.getElementById('d-felt').classList.remove('skjult');
       document.getElementById('abc-felt').classList.add('skjult');
     }else{
