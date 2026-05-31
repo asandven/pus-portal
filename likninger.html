@@ -186,12 +186,18 @@
           <div id="oppgave-tekst" class="oppgave-tekst skjult"></div>
           <div id="oppgave-likning" class="oppgave-likning laster">Henter oppgave…</div>
           <div id="likning-input-wrap" class="skjult">
-            <label class="likning-label">Skriv likningen din</label>
-            <input type="text" id="likning-input" class="likning-input" placeholder="f.eks. 4x = 168  (bruk / som brøkstrek)" />
-            <div id="likning-tilbake" class="skjult" style="margin-top:8px; font-size:0.85rem;"></div>
+            <label class="likning-label" style="margin-top:12px;">1. Skriv likningen din</label>
+            <input type="text" id="likning-input" class="likning-input" placeholder="f.eks. 6x = 72" />
+            <div id="likning-tilbake" class="skjult" style="margin-top:6px; font-size:0.85rem;"></div>
+            <label class="likning-label" style="margin-top:12px;">2. Løs likningen (skriv bare tallet)</label>
+            <div class="svar-wrap" style="margin-top:6px;">
+              <input type="text" id="svar-input" class="svar-input" placeholder="x = ?" onkeydown="if(event.key==='Enter')sjekkSvar()" />
+              <button class="svar-btn" onclick="sjekkSvar()">Sjekk</button>
+              <button class="hint-btn" onclick="visHint()">Hint</button>
+            </div>
           </div>
-          <div class="svar-wrap">
-            <input type="text" id="svar-input" class="svar-input" placeholder="x = ?" onkeydown="if(event.key==='Enter')sjekkSvar()" />
+          <div id="svar-wrap-vanlig" class="svar-wrap">
+            <input type="text" id="svar-input-vanlig" class="svar-input" placeholder="x = ?" onkeydown="if(event.key==='Enter')sjekkSvar()" />
             <button class="svar-btn" onclick="sjekkSvar()">Sjekk</button>
             <button class="hint-btn" onclick="visHint()">Hint</button>
           </div>
@@ -450,10 +456,11 @@ async function hentOppgave() {
   document.getElementById('niva-opp-melding').classList.add('skjult');
   document.getElementById('neste-btn').classList.add('skjult');
   document.getElementById('likning-input-wrap').classList.add('skjult');
+  document.getElementById('svar-wrap-vanlig').classList.remove('skjult');
   document.getElementById('likning-input').value = '';
   document.getElementById('likning-tilbake').classList.add('skjult');
-  document.getElementById('svar-input').value = '';
-  document.getElementById('svar-input').disabled = false;
+  const si = document.getElementById('svar-input') || document.getElementById('svar-input-vanlig');
+  if(si) { si.value = ''; si.disabled = false; }
   try {
     const resp = await fetch(`${API}/likning/oppgave`, {method:'POST', headers:HDR, body:JSON.stringify({brukernavn:bruker.brukernavn, niva:bruker.niva, variant:bruker.variant, forrige_oppgave:forrigeOppgave})});
     gjeldende = await resp.json();
@@ -461,11 +468,13 @@ async function hentOppgave() {
     if (gjeldende.tekst) {
       document.getElementById('oppgave-tekst').textContent = gjeldende.tekst;
       document.getElementById('oppgave-tekst').classList.remove('skjult');
-      document.getElementById('oppgave-likning').textContent = 'Sett opp likningen og løs den:';
+      document.getElementById('oppgave-likning').innerHTML = 'Sett opp likningen og løs den: <span style="font-size:0.82rem; font-weight:400;">(bruk / som brøkstrek hvis du trenger)</span>';
       document.getElementById('oppgave-likning').style.fontSize = '1rem';
       document.getElementById('oppgave-likning').style.color = 'var(--text-muted)';
       document.getElementById('likning-input-wrap').classList.remove('skjult');
+      document.getElementById('svar-wrap-vanlig').classList.add('skjult');
     } else {
+      document.getElementById('svar-wrap-vanlig').classList.remove('skjult');
       document.getElementById('oppgave-likning').textContent = gjeldende.oppgave;
       document.getElementById('oppgave-likning').style.fontSize = '1.6rem';
       document.getElementById('oppgave-likning').style.color = 'var(--text)';
@@ -497,7 +506,8 @@ async function sjekkSvar() {
     if (!vData.riktig) return;
   }
 
-  const input = document.getElementById('svar-input').value.trim().replace(',','.').replace(/x\s*=/,'').trim();
+  const svarEl = document.getElementById('svar-input') || document.getElementById('svar-input-vanlig');
+  const input = svarEl ? svarEl.value.trim().replace(',','.').replace(/x\s*=/,'').trim();
   const tilbake = document.getElementById('tilbakemelding');
   let riktig = false;
   if (Array.isArray(gjeldende.svar)) {
@@ -509,7 +519,7 @@ async function sjekkSvar() {
   tilbake.className = 'tilbake ' + (riktig ? 'riktig' : 'feil');
   tilbake.textContent = riktig ? '✓ Riktig! Bra jobbet!' : '✗ Ikke helt riktig. Prøv igjen eller se hint.';
   tilbake.classList.remove('skjult');
-  if (riktig) { document.getElementById('svar-input').disabled = true; visSteg(); document.getElementById('neste-btn').classList.remove('skjult'); }
+  if (riktig) { if(svarEl) svarEl.disabled = true; visSteg(); document.getElementById('neste-btn').classList.remove('skjult'); }
   try {
     const resp = await fetch(`${API}/likning/svar`, {method:'POST', headers:HDR, body:JSON.stringify({brukernavn:bruker.brukernavn, riktig, hint_brukt:hintBrukt})});
     const data = await resp.json();
