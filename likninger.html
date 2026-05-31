@@ -170,7 +170,7 @@
 </div>
 
 <script>
-const API = 'https://vitalize-subtext-preheated.ngrok-free.dev';
+const API = 'http://100.76.42.81:8780';
 let bruker = null;
 let gjeldende = null;
 let hintBrukt = false;
@@ -191,7 +191,7 @@ async function loggInn() {
 
   try {
     const resp = await fetch(`${API}/likning/logginn`, {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
+      method: 'POST', headers: {'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true'},
       body: JSON.stringify({brukernavn: b, passord: p})
     });
     const data = await resp.json();
@@ -218,7 +218,7 @@ async function registrer() {
 
   try {
     const resp = await fetch(`${API}/likning/registrer`, {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
+      method: 'POST', headers: {'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true'},
       body: JSON.stringify({brukernavn: b, passord: p})
     });
     const data = await resp.json();
@@ -262,7 +262,7 @@ async function hentOppgave() {
 
   try {
     const resp = await fetch(`${API}/likning/oppgave`, {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
+      method: 'POST', headers: {'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true'},
       body: JSON.stringify({brukernavn: bruker.brukernavn, niva: bruker.niva, variant: bruker.variant})
     });
     gjeldende = await resp.json();
@@ -311,7 +311,7 @@ async function sjekkSvar() {
   }
 
   const resp = await fetch(`${API}/likning/svar`, {
-    method: 'POST', headers: {'Content-Type': 'application/json'},
+    method: 'POST', headers: {'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true'},
     body: JSON.stringify({brukernavn: bruker.brukernavn, riktig, hint_brukt: hintBrukt})
   });
   const data = await resp.json();
