@@ -1,13 +1,14 @@
 {
-  "uke": 23,
-  "oppdatert": "2026-05-30",
+  "uke": 24,
+  "oppdatert": "2026-06-05",
   "meldinger": [
-    "Onsdag: Besøk fra tannhelsetjenesten i 3.time",
-    "Torsdag: Vanlig skole kl 8.25-11.15. Østersdugnad kl 12-14. Oppmøte på Klopp. Vi blir møtt av representant fra Østersdugnaden.no. Elevene må ha på/med shorts og sko til å gå i vannet med. For eksempel Crocs, gamle joggesko. Alle har med egen matpakke."
+    "Mandag: Husk å ta med det dere trenger til KRLE-timen",
+    "Tirsdag: Fagdag i norsk hele dagen",
+    "Onsdag: 8C har bokinnlevering kl 12.00. Ta med alle bøker du har hjemme! Hvis noe mangler MÅ du dra hjem for å hente",
+    "Torsdag: DKS Verven festivalen i Horten. Oppmøte i skolegården kl 9.15. Ta med vannflaske og en liten matpakke",
+    "Fredag: 8.trinn har FRI. Trinnet permitteres pga gjennomføring av muntlig eksamen for 10.trinn"
   ],
-  "prover": [
-    "Fredag: Samfunnsfagsprøve på kapittel 10"
-  ],
+  "prover": [],
   "timeplan": [
     {
       "tid": "08:25-08:55",
@@ -68,51 +69,30 @@
   ],
   "lekser": [
     {
-      "fag": "Engelsk",
-      "tema": "London, Connect 8. \"The children of the Industrial Revolution\". p. 93",
-      "lekse": "No homework.",
+      "fag": "Norsk",
+      "tema": "",
+      "lekse": "Lekse til tirsdag: Forbered deg til fagdagen. Les tekstene, analyser dem og pugg virkemidler",
       "laringsmal": [
-        "To understand how London became a major city.",
-        "To know a little bit about the Industrial Revolution.",
-        "To know about famous landmarks in London today."
+        "Kan analysere en fortelling. Se ON for læringsmål"
       ]
     },
     {
-      "fag": "Matematikk",
-      "tema": "Likninger",
-      "lekse": "Oppstart likninger. Ingen lekse denne uka.",
-      "laringsmal": [
-        "Lære og bruke strategier for å finne ukjente verdier i regnestykker."
-      ]
+      "fag": "Engelsk",
+      "tema": "London",
+      "lekse": "No homework",
+      "laringsmal": []
     },
     {
       "fag": "Samfunnsfag",
-      "tema": "Kap 10 Bærekraftig utvikling-vår felles fremtid, s. 206, Arena 8.",
-      "lekse": "Til fredag: Øv til prøven. Les kap 10, s. 184-203. Se til at du har svart på leksene i ukene 21 og 22. Svar også på spørsmålene på s. 203 (Finn svaret og Utforsk) når du øver. Bruk også OneNote-siden med filmer, begreper og bilder.",
-      "laringsmal": [
-        "Kunne begrepene: jordbruksrevolusjonen, den industrielle revolusjonen, bærekraftig utvikling, demokrati, klima, bærekraftsmål, forbruk og natur.",
-        "Kunne gi eksempler på at økonomiske interesser og natur kan stå i konflikt med hverandre.",
-        "Kunne gi eksempler på at enkeltmennesker, teknologi og samfunnet kan gjøre noe for å få til bærekraftig utvikling."
-      ]
+      "tema": "Bærekraftig utvikling-vår felles fremtid",
+      "lekse": "Ingen lekse",
+      "laringsmal": []
     },
     {
       "fag": "KRLE",
-      "tema": "Det gamle testamentet og s. 77, jødedommen, s.119. 8 store spørsmål",
-      "lekse": "Ingen lekse.",
-      "laringsmal": [
-        "Kunne en oversikt over viktige hendelser i jødedommens historie.",
-        "Kunne forklare særpreget ved religionen.",
-        "Bli kjent med utvalgte tekster.",
-        "Kunne fortelle om jødedommen i Norge og verden i dag."
-      ]
-    },
-    {
-      "fag": "Kunst og Håndverk",
-      "tema": "Pennal Barneleke",
-      "lekse": "Ferdigstilling av oppgave.",
-      "laringsmal": [
-        "Oppgave og vurderingskriterier finner du i OneNote –Innholdsbibliotek - Oppgaver"
-      ]
+      "tema": "Jødiske høytider",
+      "lekse": "Til mandag: Ta med rekvisitter, klær og ev. mat til presentasjonen om en jødisk høytid",
+      "laringsmal": []
     }
   ]
 }
