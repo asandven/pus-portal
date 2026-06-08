@@ -1,13 +1,7 @@
 {
-  "uke": 24,
-  "oppdatert": "2026-06-05",
-  "meldinger": [
-    "Mandag: Husk å ta med det dere trenger til KRLE-timen",
-    "Tirsdag: Fagdag i norsk hele dagen",
-    "Onsdag: 8C har bokinnlevering kl 12.00. Ta med alle bøker du har hjemme! Hvis noe mangler MÅ du dra hjem for å hente",
-    "Torsdag: DKS Verven festivalen i Horten. Oppmøte i skolegården kl 9.15. Ta med vannflaske og en liten matpakke",
-    "Fredag: 8.trinn har FRI. Trinnet permitteres pga gjennomføring av muntlig eksamen for 10.trinn"
-  ],
+  "uke": 25,
+  "oppdatert": "2026-06-08",
+  "meldinger": [],
   "prover": [],
   "timeplan": [
     {
@@ -67,32 +61,5 @@
       "fredag": ""
     }
   ],
-  "lekser": [
-    {
-      "fag": "Norsk",
-      "tema": "",
-      "lekse": "Lekse til tirsdag: Forbered deg til fagdagen. Les tekstene, analyser dem og pugg virkemidler",
-      "laringsmal": [
-        "Kan analysere en fortelling. Se ON for læringsmål"
-      ]
-    },
-    {
-      "fag": "Engelsk",
-      "tema": "London",
-      "lekse": "No homework",
-      "laringsmal": []
-    },
-    {
-      "fag": "Samfunnsfag",
-      "tema": "Bærekraftig utvikling-vår felles fremtid",
-      "lekse": "Ingen lekse",
-      "laringsmal": []
-    },
-    {
-      "fag": "KRLE",
-      "tema": "Jødiske høytider",
-      "lekse": "Til mandag: Ta med rekvisitter, klær og ev. mat til presentasjonen om en jødisk høytid",
-      "laringsmal": []
-    }
-  ]
+  "lekser": []
 }
