@@ -91,10 +91,10 @@ function oppdaterSlides(ukeplan) {
         const prover    = (ukeplan.prover || []);
         let html = '';
         if (meldinger.length) {
-            html += meldinger.slice(0, 2).map(m => `<div>📢 ${m}</div>`).join('');
+            html += meldinger.map(m => `<div>📢 ${m}</div>`).join('');
         }
         if (prover.length) {
-            html += prover.slice(0, 2).map(p => `<div>📝 ${p}</div>`).join('');
+            html += prover.map(p => `<div>📝 ${p}</div>`).join('');
         }
         if (!html) html = 'Ingen meldinger denne uka.';
         body.innerHTML = html;
