@@ -1,0 +1,98 @@
+{
+  "uke": 24,
+  "oppdatert": "2026-06-05",
+  "meldinger": [
+    "Mandag: Husk å ta med det dere trenger til KRLE-timen",
+    "Tirsdag: Fagdag i norsk hele dagen",
+    "Onsdag: 8C har bokinnlevering kl 12.00. Ta med alle bøker du har hjemme! Hvis noe mangler MÅ du dra hjem for å hente",
+    "Torsdag: DKS Verven festivalen i Horten. Oppmøte i skolegården kl 9.15. Ta med vannflaske og en liten matpakke",
+    "Fredag: 8.trinn har FRI. Trinnet permitteres pga gjennomføring av muntlig eksamen for 10.trinn"
+  ],
+  "prover": [],
+  "timeplan": [
+    {
+      "tid": "08:25-08:55",
+      "mandag": "Utdanningsvalg",
+      "tirsdag": "",
+      "onsdag": "Norsk",
+      "torsdag": "Norsk",
+      "fredag": "Samf"
+    },
+    {
+      "tid": "09:00-10:00",
+      "mandag": "KRLE",
+      "tirsdag": "Naturfag",
+      "onsdag": "Engelsk",
+      "torsdag": "Engelsk",
+      "fredag": "Gym"
+    },
+    {
+      "tid": "10:15-11:15",
+      "mandag": "Matte",
+      "tirsdag": "Språk",
+      "onsdag": "Matte",
+      "torsdag": "Språk",
+      "fredag": "Språk"
+    },
+    {
+      "tid": "12:00-13:00",
+      "mandag": "Norsk",
+      "tirsdag": "Gym",
+      "onsdag": "Musikk",
+      "torsdag": "Matte",
+      "fredag": "Matte"
+    },
+    {
+      "tid": "13:15-14:15",
+      "mandag": "Valgfag",
+      "tirsdag": "Norsk",
+      "onsdag": "KRLE / Samf",
+      "torsdag": "Naturfag",
+      "fredag": "Naturfag"
+    },
+    {
+      "tid": "14:15-14:45",
+      "mandag": "Valgfag",
+      "tirsdag": "Norsk",
+      "onsdag": "",
+      "torsdag": "",
+      "fredag": ""
+    },
+    {
+      "tid": "14:45-15:45",
+      "mandag": "Leksehjelp",
+      "tirsdag": "Leksehjelp",
+      "onsdag": "",
+      "torsdag": "",
+      "fredag": ""
+    }
+  ],
+  "lekser": [
+    {
+      "fag": "Norsk",
+      "tema": "",
+      "lekse": "Lekse til tirsdag: Forbered deg til fagdagen. Les tekstene, analyser dem og pugg virkemidler",
+      "laringsmal": [
+        "Kan analysere en fortelling. Se ON for læringsmål"
+      ]
+    },
+    {
+      "fag": "Engelsk",
+      "tema": "London",
+      "lekse": "No homework",
+      "laringsmal": []
+    },
+    {
+      "fag": "Samfunnsfag",
+      "tema": "Bærekraftig utvikling-vår felles fremtid",
+      "lekse": "Ingen lekse",
+      "laringsmal": []
+    },
+    {
+      "fag": "KRLE",
+      "tema": "Jødiske høytider",
+      "lekse": "Til mandag: Ta med rekvisitter, klær og ev. mat til presentasjonen om en jødisk høytid",
+      "laringsmal": []
+    }
+  ]
+}
