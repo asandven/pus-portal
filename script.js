@@ -91,7 +91,8 @@ function oppdaterSlides(ukeplan) {
         const prover    = (ukeplan.prover || []);
         let html = '';
         if (meldinger.length) {
-            html += meldinger.map(m => `<div>📢 ${m}</div>`).join('');
+            const kolonne = meldinger.length > 3 ? 'display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;' : '';
+            html += `<div style="${kolonne}">${meldinger.map(m => `<div>📢 ${m}</div>`).join('')}</div>`;
         }
         if (prover.length) {
             html += prover.map(p => `<div>📝 ${p}</div>`).join('');
