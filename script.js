@@ -5,7 +5,7 @@ function toggleMenu() {
 
 function visSeksjon(id, el) {
     document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+    document.getElementById(id).classList.addf('active');
     if (el) {
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
@@ -91,7 +91,7 @@ function oppdaterSlides(ukeplan) {
         const prover    = (ukeplan.prover || []);
         let html = '';
         if (meldinger.length) {
-            html += meldinger.map(m => `<div style="padding:2px 0;">📢 ${m.length > 80 ? m.slice(0,80)+'…' : m}</div>`).join('');
+            html += meldinger.map(m => `<div style="padding:2px 0;">📢 ${m.length > 120 ? m.slice(0,120)+'…' : m}</div>`).join('');
         }
         if (prover.length) {
             html += prover.map(p => `<div>📝 ${p}</div>`).join('');
