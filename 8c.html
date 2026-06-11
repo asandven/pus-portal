@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8C – Tursjekkliste</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand: #6b121e;
+            --navy: #1e293b;
+            --bg: #f8fafc;
+            --bg2: #f1f5f9;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --white: #ffffff;
+            --green: #16a34a;
+            --radius: 12px;
+            --shadow: 0 4px 20px rgba(0,0,0,0.07);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--navy);
+            color: white;
+            padding: 16px 20px;
+            border-bottom: 3px solid var(--brand);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        header span {
+            font-size: 0.85rem;
+            opacity: 0.65;
+        }
+
+        .stats {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 20px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .stats strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .stat-chip {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot-green { background: var(--green); }
+        .dot-orange { background: #f97316; }
+        .dot-blue { background: #3b82f6; }
+        .dot-purple { background: #8b5cf6; }
+        .dot-red { background: #ef4444; }
+        .dot-gray { background: #94a3b8; }
+
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            min-width: 560px;
+        }
+
+        thead tr {
+            background: var(--navy);
+            color: white;
+        }
+
+        thead th {
+            padding: 10px 8px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+
+        thead th.name-col {
+            text-align: left;
+            padding-left: 14px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: var(--bg2);
+        }
+
+        tbody tr.checked-any {
+            background: #f0fdf4;
+        }
+
+        td {
+            padding: 10px 8px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        td.name-col {
+            text-align: left;
+            padding-left: 14px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        /* Custom checkboxes */
+        .check-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .check-wrap input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 28px;
+            height: 28px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+
+        .check-wrap input[type="checkbox"]:checked {
+            border-color: var(--green);
+            background: var(--green);
+        }
+
+        .check-wrap input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 3px;
+            width: 7px;
+            height: 12px;
+            border: 2px solid white;
+            border-top: none;
+            border-left: none;
+            transform: rotate(45deg);
+        }
+
+        .check-wrap input[type="checkbox"]:active {
+            transform: scale(0.9);
+        }
+
+        /* Color-coded checkboxes */
+        .col-bus-from input:checked     { border-color: var(--green);  background: var(--green); }
+        .col-pause   input:checked      { border-color: #f97316; background: #f97316; }
+        .col-bus-home input:checked     { border-color: #3b82f6; background: #3b82f6; }
+        .col-driven  input:checked      { border-color: #8b5cf6; background: #8b5cf6; }
+        .col-picked  input:checked      { border-color: #ef4444; background: #ef4444; }
+
+        /* Annet tekstboks */
+        .annet-input {
+            width: 100%;
+            min-width: 90px;
+            padding: 5px 7px;
+            border: 1.5px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.78rem;
+            color: var(--text);
+            background: var(--bg);
+            resize: none;
+            transition: border-color 0.15s;
+            line-height: 1.3;
+        }
+
+        .annet-input:focus {
+            outline: none;
+            border-color: var(--brand);
+        }
+
+        .annet-input::placeholder {
+            color: #cbd5e1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* Reset-knapp */
+        .reset-btn {
+            margin: 0 16px 16px;
+            padding: 8px 16px;
+            background: transparent;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .reset-btn:hover {
+            border-color: var(--brand);
+            color: var(--brand);
+        }
+
+        @media (max-width: 600px) {
+            .stats { gap: 10px; }
+            td, th { padding: 8px 5px; }
+            td.name-col, thead th.name-col { padding-left: 10px; }
+            .annet-input { min-width: 70px; font-size: 0.72rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>
+        <h1>8C – Tursjekkliste</h1>
+        <span>22 elever</span>
+    </div>
+</header>
+
+<div class="stats" id="stats">
+    <span class="stat-chip"><span class="dot dot-green"></span> På buss fra skole: <strong id="s1">0</strong></span>
+    <span class="stat-chip"><span class="dot dot-orange"></span> Møtte ved pause: <strong id="s2">0</strong></span>
+    <span class="stat-chip"><span class="dot dot-blue"></span> På buss hjem: <strong id="s3">0</strong></span>
+    <span class="stat-chip"><span class="dot dot-purple"></span> Blir kjørt til: <strong id="s4">0</strong></span>
+    <span class="stat-chip"><span class="dot dot-red"></span> Blir hentet: <strong id="s5">0</strong></span>
+</div>
+
+<div class="table-wrapper">
+    <table id="main-table">
+        <thead>
+            <tr>
+                <th class="name-col">Navn</th>
+                <th>På buss<br>fra skole</th>
+                <th>Møtte<br>ved pause</th>
+                <th>På buss<br>hjem</th>
+                <th>Blir<br>kjørt til</th>
+                <th>Blir<br>hentet</th>
+                <th>Annet</th>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+        </tbody>
+    </table>
+</div>
+
+<button class="reset-btn" onclick="confirmReset()">Nullstill alle avkrysninger</button>
+
+<footer>8C · Presterød Ungdomsskole</footer>
+
+<script>
+    const names = [
+        "Sander", "Edvard", "Elvira", "Kristiane", "Lykke",
+        "Theo", "Christopher", "Sarah", "Sofia", "Isabelle",
+        "Julie", "Pia", "Thea", "Edward", "Olympia",
+        "Christian", "Sofie", "Lotte", "Sunniva", "Storm",
+        "Markus", "Frøya"
+    ];
+
+    const cols = [
+        { key: 'busFra',    cls: 'col-bus-from', stat: 's1' },
+        { key: 'pause',     cls: 'col-pause',    stat: 's2' },
+        { key: 'busHjem',   cls: 'col-bus-home', stat: 's3' },
+        { key: 'kjort',     cls: 'col-driven',   stat: 's4' },
+        { key: 'hentet',    cls: 'col-picked',   stat: 's5' },
+    ];
+
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem('8c-tur') || '{}'); }
+        catch { return {}; }
+    }
+
+    function saveState() {
+        const state = {};
+        names.forEach(name => {
+            state[name] = {};
+            cols.forEach(c => {
+                const cb = document.getElementById(`${name}-${c.key}`);
+                if (cb) state[name][c.key] = cb.checked;
+            });
+            const ta = document.getElementById(`${name}-annet`);
+            if (ta) state[name].annet = ta.value;
+        });
+        localStorage.setItem('8c-tur', JSON.stringify(state));
+        updateStats();
+    }
+
+    function updateStats() {
+        cols.forEach(c => {
+            const count = names.filter(name => {
+                const cb = document.getElementById(`${name}-${c.key}`);
+                return cb && cb.checked;
+            }).length;
+            document.getElementById(c.stat).textContent = count;
+        });
+
+        // Row highlight
+        names.forEach(name => {
+            const row = document.getElementById(`row-${name}`);
+            const anyChecked = cols.some(c => {
+                const cb = document.getElementById(`${name}-${c.key}`);
+                return cb && cb.checked;
+            });
+            row.classList.toggle('checked-any', anyChecked);
+        });
+    }
+
+    function buildTable() {
+        const state = loadState();
+        const tbody = document.getElementById('tbody');
+        tbody.innerHTML = '';
+
+        names.forEach(name => {
+            const s = state[name] || {};
+            const tr = document.createElement('tr');
+            tr.id = `row-${name}`;
+
+            // Navn
+            const tdName = document.createElement('td');
+            tdName.className = 'name-col';
+            tdName.textContent = name;
+            tr.appendChild(tdName);
+
+            // Checkboxes
+            cols.forEach(c => {
+                const td = document.createElement('td');
+                td.className = `check-wrap ${c.cls}`;
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.id = `${name}-${c.key}`;
+                cb.checked = !!s[c.key];
+                cb.addEventListener('change', saveState);
+                td.appendChild(cb);
+                tr.appendChild(td);
+            });
+
+            // Annet
+            const tdAnnet = document.createElement('td');
+            const ta = document.createElement('textarea');
+            ta.className = 'annet-input';
+            ta.id = `${name}-annet`;
+            ta.rows = 2;
+            ta.placeholder = '…';
+            ta.value = s.annet || '';
+            ta.addEventListener('input', saveState);
+            tdAnnet.appendChild(ta);
+            tr.appendChild(tdAnnet);
+
+            tbody.appendChild(tr);
+        });
+
+        updateStats();
+    }
+
+    function confirmReset() {
+        if (confirm('Nullstille alle avkrysninger og notater?')) {
+            localStorage.removeItem('8c-tur');
+            buildTable();
+        }
+    }
+
+    buildTable();
+</script>
+
+</body>
+</html>
