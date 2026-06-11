@@ -153,15 +153,11 @@
         }
 
         /* Custom checkboxes */
-        .check-wrap {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .check-wrap input[type="checkbox"] {
+        input[type="checkbox"] {
             appearance: none;
             -webkit-appearance: none;
+            display: block;
+            margin: 0 auto;
             width: 28px;
             height: 28px;
             border: 2px solid var(--border);
@@ -169,15 +165,20 @@
             cursor: pointer;
             position: relative;
             transition: all 0.15s;
-            flex-shrink: 0;
         }
 
-        .check-wrap input[type="checkbox"]:checked {
-            border-color: var(--green);
-            background: var(--green);
+        input[type="checkbox"]:active {
+            transform: scale(0.9);
         }
 
-        .check-wrap input[type="checkbox"]:checked::after {
+        /* Color-coded checkboxes per column */
+        .col-bus-from input:checked { border-color: var(--green);  background: var(--green); }
+        .col-pause    input:checked { border-color: #f97316; background: #f97316; }
+        .col-bus-home input:checked { border-color: #3b82f6; background: #3b82f6; }
+        .col-driven   input:checked { border-color: #8b5cf6; background: #8b5cf6; }
+        .col-picked   input:checked { border-color: #ef4444; background: #ef4444; }
+
+        input[type="checkbox"]:checked::after {
             content: '';
             position: absolute;
             left: 7px;
@@ -189,17 +190,6 @@
             border-left: none;
             transform: rotate(45deg);
         }
-
-        .check-wrap input[type="checkbox"]:active {
-            transform: scale(0.9);
-        }
-
-        /* Color-coded checkboxes */
-        .col-bus-from input:checked     { border-color: var(--green);  background: var(--green); }
-        .col-pause   input:checked      { border-color: #f97316; background: #f97316; }
-        .col-bus-home input:checked     { border-color: #3b82f6; background: #3b82f6; }
-        .col-driven  input:checked      { border-color: #8b5cf6; background: #8b5cf6; }
-        .col-picked  input:checked      { border-color: #ef4444; background: #ef4444; }
 
         /* Annet tekstboks */
         .annet-input {
@@ -375,7 +365,7 @@
             // Checkboxes
             cols.forEach(c => {
                 const td = document.createElement('td');
-                td.className = `check-wrap ${c.cls}`;
+                td.className = c.cls;
                 const cb = document.createElement('input');
                 cb.type = 'checkbox';
                 cb.id = `${name}-${c.key}`;
