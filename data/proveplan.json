@@ -1,7 +1,4 @@
 {
-  "oppdatert": "2026-06-05",
-  "prover": [
-    {"uke": 23, "dag": "Fredag", "fag": "Samfunnsfag", "type": "Prøve"},
-    {"uke": 24, "dag": "Tirsdag", "fag": "Norsk", "type": "Fagdag norsk muntlig"}
-  ]
+  "oppdatert": "2026-06-13",
+  "prover": []
 }
