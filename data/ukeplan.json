@@ -1,7 +1,14 @@
 {
   "uke": 25,
   "oppdatert": "2026-06-14",
-  "meldinger": [],
+  "meldinger": [
+    "Mandag: Møt opp på skolen til vanlig tid for levering av PC'er. Deretter fotballturnering på Granø fra kl. 9. Tolv minutters kamper, syv spillere på banen og det er ikke tillatt med fotballsko med knotter. Vi avslutter dagen rundt kl. 13.15.",
+    "Tirsdag: Vi møter på Klopp kl 9.00. og plukker østers. Ta med god matpakke, og klær + sko du kan gå/vasse i vannet med. Deretter drar vi til Lille Bogen og har aktiviteter og quiz. Dagen avsluttes ca kl 13.00. NB! Vi kan ikke bade i skoletida. Hvis noen vil bli igjen å bade etterpå så må vi få en bekreftelse fra foresatte at det er ok. Send oss isf en melding i Visma.",
+    "Onsdag: Rydding i klasserom og pussing av pulter før lunsj. Når de er strøkne kan elevene gå hjem.",
+    "Torsdag: Film og badminton. Ta med badminton set hvis du har! Oppmøte til vanlig tid i auditoriet. Vi avslutter til lunsj.",
+    "Fredag: Sommeravslutning i Søndre Slagen kirke. (Det er ikke gudstjeneste, men vanlig avslutning.)",
+    "Dette er vi ferdige med for 8. ;)"
+  ],
   "prover": [],
   "timeplan": [
     {
@@ -61,5 +68,12 @@
       "fredag": ""
     }
   ],
-  "lekser": []
+  "lekser": [
+    {
+      "fag": "FREMMEDSPRÅK",
+      "tema": "",
+      "lekse": "Se egen lekseplan i OneNote!",
+      "laringsmal": []
+    }
+  ]
 }
