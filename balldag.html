@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fotballturnering 8. trinn</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f1f5f9; min-height: 100vh; padding: 12px 8px; }
+  .container { max-width: 700px; margin: 0 auto; }
+
+  .header { background: #1e293b; border-radius: 12px; padding: 14px 18px; margin-bottom: 14px; display: flex; align-items: center; gap: 14px; }
+  .header-icon { font-size: 32px; }
+  .header-title { color: #fff; font-weight: 800; font-size: 18px; letter-spacing: -0.5px; }
+  .header-sub { color: #94a3b8; font-size: 12px; margin-top: 2px; }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+  .tab { flex: 1; padding: 10px 8px; border-radius: 8px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; background: #fff; color: #64748b; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: all 0.15s; }
+  .tab.active { background: #3b82f6; color: #fff; box-shadow: 0 2px 8px rgba(59,130,246,0.4); }
+
+  .card { background: #fff; border-radius: 10px; padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+  .card-title { font-weight: 800; font-size: 14px; color: #1e293b; margin-bottom: 10px; }
+
+  /* Standings */
+  .standings-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .standings-table th { background: #1e293b; color: #fff; padding: 7px 6px; text-align: center; font-size: 12px; }
+  .standings-table th:nth-child(2) { text-align: left; padding-left: 10px; }
+  .standings-table td { padding: 6px 6px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+  .standings-table td:nth-child(2) { text-align: left; padding-left: 10px; font-weight: 700; }
+  .standings-table tr.finalist { background: #eff6ff; }
+  .standings-table tr.vinner { background: #dcfce7; }
+  .standings-table tr.normal:nth-child(odd) { background: #f8fafc; }
+  .standings-table tr.normal:nth-child(even) { background: #fff; }
+  .standings-table tr.separator td { border-top: 2px dashed #cbd5e1; }
+  .badge { display: inline-block; font-size: 10px; padding: 1px 5px; border-radius: 4px; margin-left: 4px; color: #fff; vertical-align: middle; }
+  .badge-finale { background: #3b82f6; }
+  .badge-vinner { background: #16a34a; }
+  .pos-cell { color: #94a3b8; font-weight: 600; font-size: 12px; }
+  .pts-cell { font-weight: 900; font-size: 15px; }
+  .gd-pos { color: #16a34a; font-weight: 600; }
+  .gd-neg { color: #dc2626; font-weight: 600; }
+  .win-col { color: #16a34a; font-weight: 600; }
+  .loss-col { color: #dc2626; }
+  .legend { margin-top: 6px; font-size: 11px; color: #94a3b8; }
+
+  /* Matches */
+  .match-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .match-table th { background: #1e293b; color: #fff; padding: 7px 8px; }
+  .match-table th:nth-child(1) { text-align: left; width: 50px; }
+  .match-table th:nth-child(2) { text-align: right; }
+  .match-table th:nth-child(3) { text-align: center; width: 110px; }
+  .match-table th:nth-child(4) { text-align: left; }
+  .match-table td { padding: 6px 8px; border-bottom: 1px solid #e2e8f0; }
+  .match-table tr:nth-child(odd) td { background: #f8fafc; }
+  .match-table tr:nth-child(even) td { background: #fff; }
+  .match-table tr.finale-row td { background: #fef9c3 !important; border-top: 3px solid #f59e0b; }
+  .time-cell { color: #64748b; font-weight: 600; font-size: 12px; }
+  .team-cell { font-weight: 700; }
+  .team-winner { color: #16a34a; }
+  .team-loser { color: #dc2626; }
+  .score-wrap { display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .score-input { width: 40px; text-align: center; border: 2px solid #e2e8f0; border-radius: 6px; padding: 4px 2px; font-size: 15px; font-weight: 700; color: #1e293b; outline: none; }
+  .score-input:focus { border-color: #3b82f6; }
+  .score-input.has-value { background: #f0fdf4; }
+  .score-sep { font-weight: 700; color: #94a3b8; }
+  .finale-time { color: #92400e; font-weight: 700; font-size: 12px; }
+  .finale-badge { display: inline-block; margin-top: 2px; font-size: 10px; background: #f59e0b; color: #fff; border-radius: 4px; padding: 1px 5px; }
+  .finale-team { font-weight: 700; color: #92400e; }
+
+  .reset-btn { width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px; background: #fff; color: #94a3b8; font-size: 13px; cursor: pointer; font-weight: 600; margin-top: 4px; }
+  .reset-btn:hover { border-color: #dc2626; color: #dc2626; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-icon">🏆</div>
+    <div>
+      <div class="header-title">Fotballturnering 8. trinn</div>
+      <div class="header-sub">Skriv inn mål – tabell oppdateres automatisk · Lagres i nettleseren</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-gutter" onclick="switchTab('gutter')">⚽ Gutter – Bane 1</button>
+    <button class="tab" id="tab-jenter" onclick="switchTab('jenter')">⚽ Jenter – Bane 2</button>
+  </div>
+
+  <div id="pane-gutter">
+    <div class="card">
+      <div class="card-title">📊 Stillingstabell</div>
+      <table class="standings-table" id="standings-gutter"></table>
+      <div class="legend">K=kamper · V=vunnet · U=uavgjort · T=tapt · MF=målforskjell · P=poeng</div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 Kamper</div>
+      <table class="match-table" id="matches-gutter"></table>
+    </div>
+    <button class="reset-btn" onclick="resetTab('gutter')">🗑 Nullstill gutter-resultater</button>
+  </div>
+
+  <div id="pane-jenter" style="display:none">
+    <div class="card">
+      <div class="card-title">📊 Stillingstabell</div>
+      <table class="standings-table" id="standings-jenter"></table>
+      <div class="legend">K=kamper · V=vunnet · U=uavgjort · T=tapt · MF=målforskjell · P=poeng</div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 Kamper</div>
+      <table class="match-table" id="matches-jenter"></table>
+    </div>
+    <button class="reset-btn" onclick="resetTab('jenter')">🗑 Nullstill jenter-resultater</button>
+  </div>
+</div>
+
+<script>
+const TEAMS = ["8A","8B","8C","8D","8E","8F"];
+
+const MATCHES = {
+  gutter: [
+    {id:1,time:"09:15",l1:"8A",l2:"8B"},
+    {id:2,time:"09:30",l1:"8E",l2:"8F"},
+    {id:3,time:"09:45",l1:"8C",l2:"8D"},
+    {id:4,time:"10:00",l1:"8E",l2:"8A"},
+    {id:5,time:"10:15",l1:"8B",l2:"8C"},
+    {id:6,time:"10:30",l1:"8F",l2:"8D"},
+    {id:7,time:"10:45",l1:"8C",l2:"8E"},
+    {id:8,time:"11:00",l1:"8B",l2:"8D"},
+    {id:9,time:"11:15",l1:"8A",l2:"8D"},
+    {id:10,time:"11:30",l1:"8C",l2:"8F"},
+    {id:11,time:"11:45",l1:"8B",l2:"8E"},
+    {id:12,time:"12:00",l1:"8E",l2:"8D"},
+    {id:13,time:"12:15",l1:"8A",l2:"8C"},
+    {id:14,time:"12:30",l1:"8A",l2:"8F"},
+    {id:15,time:"12:45",l1:"8F",l2:"8B"},
+  ],
+  jenter: [
+    {id:1,time:"09:15",l1:"8F",l2:"8B"},
+    {id:2,time:"09:30",l1:"8A",l2:"8B"},
+    {id:3,time:"09:45",l1:"8E",l2:"8F"},
+    {id:4,time:"10:00",l1:"8C",l2:"8D"},
+    {id:5,time:"10:15",l1:"8E",l2:"8A"},
+    {id:6,time:"10:30",l1:"8B",l2:"8C"},
+    {id:7,time:"10:45",l1:"8F",l2:"8D"},
+    {id:8,time:"11:00",l1:"8C",l2:"8E"},
+    {id:9,time:"11:15",l1:"8B",l2:"8D"},
+    {id:10,time:"11:30",l1:"8A",l2:"8D"},
+    {id:11,time:"11:45",l1:"8C",l2:"8F"},
+    {id:12,time:"12:00",l1:"8B",l2:"8E"},
+    {id:13,time:"12:15",l1:"8E",l2:"8D"},
+    {id:14,time:"12:30",l1:"8A",l2:"8C"},
+    {id:15,time:"12:45",l1:"8A",l2:"8F"},
+  ]
+};
+
+function loadResults(tab) {
+  try { return JSON.parse(localStorage.getItem('ft_' + tab) || '{}'); } catch(e) { return {}; }
+}
+function saveResults(tab, results) {
+  localStorage.setItem('ft_' + tab, JSON.stringify(results));
+}
+function loadFinale(tab) {
+  try { return JSON.parse(localStorage.getItem('ft_finale_' + tab) || '{"g1":"","g2":""}'); } catch(e) { return {g1:"",g2:""}; }
+}
+function saveFinale(tab, f) {
+  localStorage.setItem('ft_finale_' + tab, JSON.stringify(f));
+}
+
+let state = {
+  gutter: loadResults('gutter'),
+  jenter: loadResults('jenter'),
+  finale_gutter: loadFinale('gutter'),
+  finale_jenter: loadFinale('jenter'),
+};
+
+function calcStandings(tab) {
+  const results = state[tab];
+  const stats = {};
+  TEAMS.forEach(t => { stats[t] = {team:t,p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}; });
+  MATCHES[tab].forEach(m => {
+    const r = results[m.id];
+    if (!r || r.g1 === '' || r.g2 === '') return;
+    const g1 = parseInt(r.g1), g2 = parseInt(r.g2);
+    if (isNaN(g1) || isNaN(g2)) return;
+    stats[m.l1].p++; stats[m.l2].p++;
+    stats[m.l1].gf += g1; stats[m.l1].ga += g2;
+    stats[m.l2].gf += g2; stats[m.l2].ga += g1;
+    if (g1 > g2) { stats[m.l1].w++; stats[m.l1].pts += 3; stats[m.l2].l++; }
+    else if (g1 < g2) { stats[m.l2].w++; stats[m.l2].pts += 3; stats[m.l1].l++; }
+    else { stats[m.l1].d++; stats[m.l1].pts++; stats[m.l2].d++; stats[m.l2].pts++; }
+  });
+  return Object.values(stats).sort((a,b) => {
+    if (b.pts !== a.pts) return b.pts - a.pts;
+    const gdA = a.gf - a.ga, gdB = b.gf - b.ga;
+    if (gdB !== gdA) return gdB - gdA;
+    return b.gf - a.gf;
+  });
+}
+
+function renderStandings(tab) {
+  const standings = calcStandings(tab);
+  const finale = state['finale_' + tab];
+  const fg1 = parseInt(finale.g1), fg2 = parseInt(finale.g2);
+  const finaleSpilt = finale.g1 !== '' && finale.g2 !== '' && !isNaN(fg1) && !isNaN(fg2);
+  const finalist1 = standings[0]?.team;
+  const finalist2 = standings[1]?.team;
+  let finalVinner = null;
+  if (finaleSpilt) {
+    if (fg1 > fg2) finalVinner = finalist1;
+    else if (fg2 > fg1) finalVinner = finalist2;
+  }
+
+  let html = `<thead><tr>
+    <th>#</th><th>Lag</th><th>K</th><th>V</th><th>U</th><th>T</th><th>Mål</th><th>MF</th><th>P</th>
+  </tr></thead><tbody>`;
+
+  standings.forEach((s, i) => {
+    const gd = s.gf - s.ga;
+    const isVinner = finalVinner && s.team === finalVinner;
+    const isFinalist = i < 2 && !finalVinner;
+    const cls = isVinner ? 'vinner' : isFinalist ? 'finalist' : 'normal';
+    const sep = i === 2 ? ' separator' : '';
+    const gdStr = gd > 0 ? '+' + gd : '' + gd;
+    const gdCls = gd > 0 ? 'gd-pos' : gd < 0 ? 'gd-neg' : '';
+    const badge = isVinner
+      ? '<span class="badge badge-vinner">VINNER</span>'
+      : isFinalist
+        ? '<span class="badge badge-finale">Finale</span>'
+        : '';
+    const pos = isVinner ? '🏆' : (i + 1);
+    html += `<tr class="${cls}${sep}">
+      <td class="pos-cell">${pos}</td>
+      <td>${s.team}${badge}</td>
+      <td>${s.p}</td>
+      <td class="win-col">${s.w}</td>
+      <td>${s.d}</td>
+      <td class="loss-col">${s.l}</td>
+      <td>${s.gf}–${s.ga}</td>
+      <td class="${gdCls}">${gdStr}</td>
+      <td class="pts-cell">${s.pts}</td>
+    </tr>`;
+  });
+  html += '</tbody>';
+  document.getElementById('standings-' + tab).innerHTML = html;
+}
+
+function renderMatches(tab) {
+  const results = state[tab];
+  const finale = state['finale_' + tab];
+  const standings = calcStandings(tab);
+  const finalist1 = standings[0]?.team || 'Nr. 1';
+  const finalist2 = standings[1]?.team || 'Nr. 2';
+
+  let html = `<thead><tr>
+    <th>Tid</th><th style="text-align:right">Lag 1</th><th>Resultat</th><th>Lag 2</th>
+  </tr></thead><tbody>`;
+
+  MATCHES[tab].forEach(m => {
+    const r = results[m.id] || {g1:'',g2:''};
+    const hasResult = r.g1 !== '' && r.g2 !== '';
+    const g1 = parseInt(r.g1), g2 = parseInt(r.g2);
+    const l1cls = hasResult && !isNaN(g1) && !isNaN(g2) ? (g1 > g2 ? 'team-winner' : g1 < g2 ? 'team-loser' : '') : '';
+    const l2cls = hasResult && !isNaN(g1) && !isNaN(g2) ? (g2 > g1 ? 'team-winner' : g2 < g1 ? 'team-loser' : '') : '';
+    const hv1 = r.g1 !== '' ? ' has-value' : '';
+    const hv2 = r.g2 !== '' ? ' has-value' : '';
+    html += `<tr>
+      <td class="time-cell">${m.time}</td>
+      <td style="text-align:right" class="team-cell ${l1cls}">${m.l1}</td>
+      <td>
+        <div class="score-wrap">
+          <input class="score-input${hv1}" type="number" min="0" max="99" value="${r.g1}"
+            oninput="setScore('${tab}',${m.id},'g1',this.value)" placeholder="–">
+          <span class="score-sep">–</span>
+          <input class="score-input${hv2}" type="number" min="0" max="99" value="${r.g2}"
+            oninput="setScore('${tab}',${m.id},'g2',this.value)" placeholder="–">
+        </div>
+      </td>
+      <td class="team-cell ${l2cls}">${m.l2}</td>
+    </tr>`;
+  });
+
+  // Finale row
+  const fhv1 = finale.g1 !== '' ? ' has-value' : '';
+  const fhv2 = finale.g2 !== '' ? ' has-value' : '';
+  html += `<tr class="finale-row">
+    <td><div class="finale-time">13:00</div><div class="finale-badge">FINALE</div></td>
+    <td style="text-align:right" class="finale-team">${finalist1}</td>
+    <td>
+      <div class="score-wrap">
+        <input class="score-input${fhv1}" type="number" min="0" max="99" value="${finale.g1}"
+          oninput="setFinale('${tab}','g1',this.value)" placeholder="–">
+        <span class="score-sep">–</span>
+        <input class="score-input${fhv2}" type="number" min="0" max="99" value="${finale.g2}"
+          oninput="setFinale('${tab}','g2',this.value)" placeholder="–">
+      </div>
+    </td>
+    <td class="finale-team">${finalist2}</td>
+  </tr>`;
+
+  html += '</tbody>';
+  document.getElementById('matches-' + tab).innerHTML = html;
+}
+
+function render(tab) {
+  renderStandings(tab);
+  renderMatches(tab);
+}
+
+function setScore(tab, id, key, val) {
+  if (!state[tab][id]) state[tab][id] = {g1:'',g2:''};
+  state[tab][id][key] = val;
+  saveResults(tab, state[tab]);
+  render(tab);
+}
+
+function setFinale(tab, key, val) {
+  state['finale_' + tab][key] = val;
+  saveFinale(tab, state['finale_' + tab]);
+  render(tab);
+}
+
+function switchTab(tab) {
+  ['gutter','jenter'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('pane-' + t).style.display = t === tab ? '' : 'none';
+  });
+}
+
+function resetTab(tab) {
+  if (!confirm('Nullstille ALLE ' + tab + '-resultater?')) return;
+  state[tab] = {};
+  state['finale_' + tab] = {g1:'',g2:''};
+  saveResults(tab, {});
+  saveFinale(tab, {g1:'',g2:''});
+  render(tab);
+}
+
+render('gutter');
+render('jenter');
+</script>
+</body>
+</html>
