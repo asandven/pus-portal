@@ -66,7 +66,6 @@
     letter-spacing: 0.04em;
   }
 
-  
   .hours-scroll {
     display: flex;
     gap: 10px;
@@ -280,26 +279,40 @@ async function getIPLocation() {
 }
 
 async function init() {
-  // Strategi: prøv GPS (3 sek timeout) → IP-posisjon → fast fallback
-  const geoPromise = new Promise((resolve) => {
-    if (!navigator.geolocation) { resolve(null); return; }
+  // Start IP-henting og GPS parallelt.
+  // GPS kan ta tid fordi Chrome venter på at brukeren trykker "Tillat".
+  // Vi viser IP-posisjon etter 4 sek hvis GPS ikke har svart ennå,
+  // men lar GPS overstyre hvis den kommer inn etterpå.
+  const ipPromise = getIPLocation();
+
+  let gpsResolved = false;
+
+  if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
-      (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-      () => resolve(null),
-      { enableHighAccuracy: false, timeout: 3000, maximumAge: 60000 }
+      (pos) => {
+        gpsResolved = true;
+        fetchUV(pos.coords.latitude, pos.coords.longitude);
+      },
+      () => {
+        if (!gpsResolved) {
+          gpsResolved = true;
+          ipPromise.then(ip => fetchUV(
+            ip ? ip.lat : FALLBACK_LAT,
+            ip ? ip.lon : FALLBACK_LON
+          ));
+        }
+      },
+      { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
     );
-  });
-  const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 3500));
-  const gpsResult = await Promise.race([geoPromise, timeoutPromise]);
+  }
 
-  if (gpsResult) { fetchUV(gpsResult.lat, gpsResult.lon); return; }
-
-  // GPS feilet/timeout — prøv IP-posisjon
-  const ipResult = await getIPLocation();
-  if (ipResult) { fetchUV(ipResult.lat, ipResult.lon); return; }
-
-  // Siste utvei: hardkodet fallback
-  fetchUV(FALLBACK_LAT, FALLBACK_LON);
+  // Etter 4 sek: ikke vent lenger — bruk IP eller fallback
+  setTimeout(async () => {
+    if (gpsResolved) return;
+    gpsResolved = true;
+    const ip = await ipPromise;
+    fetchUV(ip ? ip.lat : FALLBACK_LAT, ip ? ip.lon : FALLBACK_LON);
+  }, 4000);
 }
 
 function locateMe() {
