@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>UV-indeks</title>
+<style>
+  :root {
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(180deg, #fef9e7 0%, #fdf2d0 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding-bottom: 40px;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 16px; }
+
+  header { text-align: center; padding: 14px 0 6px; }
+  header .loc { font-size: 14px; color: #64748b; }
+  header .time { font-size: 12px; color: #94a3a8; margin-top: 2px; }
+
+  .now-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    margin: 14px 0;
+  }
+  .now-value {
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 4px 0;
+  }
+  .now-label {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .now-advice {
+    font-size: 14px;
+    color: #64748b;
+    margin-top: 8px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-top: 6px;
+  }
+
+  .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #475569;
+    margin: 22px 4px 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .hours-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 4px 4px 10px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .hours-scroll::-webkit-scrollbar { display: none; }
+  .hour-card {
+    flex: 0 0 auto;
+    background: #fff;
+    border-radius: 14px;
+    padding: 12px 10px;
+    text-align: center;
+    min-width: 62px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .hour-time { font-size: 12px; color: #94a3a8; font-weight: 600; }
+  .hour-uv { font-size: 22px; font-weight: 700; margin: 6px 0 2px; }
+  .hour-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    margin: 0 auto;
+  }
+
+  .day-card {
+    background: #fff;
+    border-radius: 14px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+  .day-row {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .day-name { font-size: 15px; font-weight: 600; flex: 1; }
+  .day-name .sub { font-size: 12px; color: #94a3a8; font-weight: 400; display: block; }
+  .day-bar-wrap {
+    flex: 2;
+    height: 8px;
+    background: #f1f5f9;
+    border-radius: 999px;
+    margin: 0 14px;
+    overflow: hidden;
+  }
+  .day-bar { height: 100%; border-radius: 999px; }
+  .day-val { font-size: 17px; font-weight: 700; width: 30px; text-align: right; }
+  .day-chevron {
+    width: 18px; height: 18px; margin-left: 8px;
+    color: #cbd5e1;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .day-card.open .day-chevron { transform: rotate(180deg); }
+
+  .day-hours {
+    display: none;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 4px 14px 14px;
+  }
+  .day-card.open .day-hours { display: grid; }
+  .day-hour-cell {
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 8px 4px;
+    text-align: center;
+  }
+  .day-hour-cell .t { font-size: 11px; color: #94a3a8; font-weight: 600; }
+  .day-hour-cell .v { font-size: 16px; font-weight: 700; margin-top: 2px; }
+  .day-hours-empty {
+    padding: 4px 14px 14px;
+    font-size: 13px;
+    color: #94a3a8;
+  }
+
+  .legend {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #94a3a8;
+    margin: 18px 4px 0;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .legend span { display: flex; align-items: center; gap: 4px; }
+  .legend .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+  .status {
+    text-align: center;
+    padding: 60px 20px;
+    color: #64748b;
+    font-size: 15px;
+  }
+  .err-btn {
+    margin-top: 14px;
+    background: #1e293b;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  footer {
+    text-align: center;
+    font-size: 11px;
+    color: #b8c0cc;
+    margin-top: 24px;
+  }
+  .locate-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    background: #1e293b;
+    color: #fff;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .locate-btn:active { opacity: 0.8; }
+  .locate-btn.loading { opacity: 0.6; pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="status" id="status">Henter posisjon …</div>
+</div>
+
+<script>
+const UV_COLORS = [
+  { max: 2.5,  color: '#4ade80', label: 'Lav' },
+  { max: 5.5,  color: '#facc15', label: 'Moderat' },
+  { max: 7.5,  color: '#fb923c', label: 'Høy' },
+  { max: 10.5, color: '#f87171', label: 'Svært høy' },
+  { max: Infinity, color: '#a855f7', label: 'Ekstrem' }
+];
+
+function uvColor(v) {
+  for (const tier of UV_COLORS) if (v <= tier.max) return tier;
+  return UV_COLORS[UV_COLORS.length - 1];
+}
+
+function advice(v) {
+  if (v <= 2.5) return 'Trygt å være ute uten beskyttelse.';
+  if (v <= 5.5) return 'Bruk solkrem og søk skygge midt på dagen.';
+  if (v <= 7.5) return 'Solkrem, hatt og skygge anbefales sterkt.';
+  if (v <= 10.5) return 'Begrens tid i sola 11–15. Solkrem er et must.';
+  return 'Unngå sol midt på dagen. Ekstrem stråling.';
+}
+
+function fmtDay(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  const days = ['Søn','Man','Tirs','Ons','Tors','Fre','Lør'];
+  const today = new Date();
+  const isToday = d.toDateString() === today.toDateString();
+  const tmr = new Date(today); tmr.setDate(tmr.getDate() + 1);
+  const isTmr = d.toDateString() === tmr.toDateString();
+  if (isToday) return { main: 'I dag', sub: d.getDate() + '.' + (d.getMonth()+1) + '.' };
+  if (isTmr) return { main: 'I morgen', sub: d.getDate() + '.' + (d.getMonth()+1) + '.' };
+  return { main: days[d.getDay()], sub: d.getDate() + '.' + (d.getMonth()+1) + '.' };
+}
+
+function fmtHour(dateStr) {
+  const d = new Date(dateStr);
+  return d.getHours() + ':00';
+}
+
+// Group all hourly UV entries by their local date (YYYY-MM-DD), so each
+// day-row can show its own hour-by-hour breakdown when expanded.
+function groupHoursByDay(times, uvs) {
+  const byDay = {};
+  for (let i = 0; i < times.length; i++) {
+    const dateKey = times[i].slice(0, 10); // "2026-06-27T13:00" -> "2026-06-27"
+    if (!byDay[dateKey]) byDay[dateKey] = [];
+    byDay[dateKey].push({ time: times[i], uv: uvs[i] });
+  }
+  return byDay;
+}
+
+function toggleDay(idx) {
+  const card = document.getElementById('day-' + idx);
+  if (!card) return;
+  const wasOpen = card.classList.contains('open');
+  document.querySelectorAll('.day-card.open').forEach(el => el.classList.remove('open'));
+  if (!wasOpen) card.classList.add('open');
+}
+
+// Fast posisjon (Tønsberg, Norge) — brukes når GPS ikke er tilgjengelig.
+// Rediger disse to verdiene hvis du vil ha UV for et annet sted.
+const FALLBACK_LAT = 59.2671;
+const FALLBACK_LON = 10.4076;
+
+async function getIPLocation() {
+  try {
+    const res = await fetch('https://ipapi.co/json/');
+    if (!res.ok) return null;
+    const d = await res.json();
+    if (d.latitude && d.longitude) return { lat: d.latitude, lon: d.longitude };
+  } catch(e) {}
+  return null;
+}
+
+async function init() {
+  // Strategi: prøv GPS (3 sek timeout) → IP-posisjon → fast fallback
+  const geoPromise = new Promise((resolve) => {
+    if (!navigator.geolocation) { resolve(null); return; }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+      () => resolve(null),
+      { enableHighAccuracy: false, timeout: 3000, maximumAge: 60000 }
+    );
+  });
+  const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 3500));
+  const gpsResult = await Promise.race([geoPromise, timeoutPromise]);
+
+  if (gpsResult) { fetchUV(gpsResult.lat, gpsResult.lon); return; }
+
+  // GPS feilet/timeout — prøv IP-posisjon
+  const ipResult = await getIPLocation();
+  if (ipResult) { fetchUV(ipResult.lat, ipResult.lon); return; }
+
+  // Siste utvei: hardkodet fallback
+  fetchUV(FALLBACK_LAT, FALLBACK_LON);
+}
+
+function locateMe() {
+  const btn = document.getElementById('locate-btn');
+  if (btn) { btn.classList.add('loading'); btn.textContent = '⏳ Henter…'; }
+  let done = false;
+  const reset = () => { if (btn) { btn.classList.remove('loading'); btn.textContent = '📍 Finn min posisjon'; } };
+  const finish = (lat, lon) => { if (done) return; done = true; reset(); fetchUV(lat, lon); };
+
+  // Prøv GPS først
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => finish(pos.coords.latitude, pos.coords.longitude),
+      async () => {
+        // GPS blokkert — fall tilbake til IP
+        const ip = await getIPLocation();
+        finish(ip ? ip.lat : FALLBACK_LAT, ip ? ip.lon : FALLBACK_LON);
+      },
+      { enableHighAccuracy: true, timeout: 6000, maximumAge: 30000 }
+    );
+  } else {
+    getIPLocation().then(ip => finish(ip ? ip.lat : FALLBACK_LAT, ip ? ip.lon : FALLBACK_LON));
+  }
+  // Hard timeout
+  setTimeout(async () => {
+    if (done) return;
+    const ip = await getIPLocation();
+    finish(ip ? ip.lat : FALLBACK_LAT, ip ? ip.lon : FALLBACK_LON);
+  }, 9000);
+}
+  const statusEl = document.getElementById('status');
+  if (statusEl) statusEl.textContent = 'Henter UV-data …';
+  try {
+    const [uvRes, geoRes] = await Promise.all([
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=uv_index&daily=uv_index_max&timezone=auto&forecast_days=16`),
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=no`)
+    ]);
+    if (!uvRes.ok) throw new Error('API-feil');
+    const data = await uvRes.json();
+    let placeName = null;
+    if (geoRes.ok) {
+      const geo = await geoRes.json();
+      // Prøv å finne beste korte stedsnavn
+      const a = geo.address || {};
+      placeName = a.city || a.town || a.village || a.suburb || a.municipality || null;
+    }
+    render(data, lat, lon, placeName);
+  } catch (e) {
+    showError('Kunne ikke hente UV-data. Sjekk internettforbindelsen.');
+  }
+}
+
+async function init() {
+  // Chrome på file:// lar navigator.geolocation eksistere men svarer
+  // aldri — vi setter derfor en hard timeout på 3 sekunder før vi
+  // faller tilbake til fast posisjon.
+  const geoPromise = new Promise((resolve) => {
+    if (!navigator.geolocation) { resolve(null); return; }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+      () => resolve(null),
+      { enableHighAccuracy: false, timeout: 3000, maximumAge: 60000 }
+    );
+  });
+  const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 3500));
+
+  const result = await Promise.race([geoPromise, timeoutPromise]);
+  if (result) {
+    fetchUV(result.lat, result.lon);
+  } else {
+    fetchUV(FALLBACK_LAT, FALLBACK_LON);
+  }
+}
+
+function locateMe() {
+  const btn = document.getElementById('locate-btn');
+  if (btn) { btn.classList.add('loading'); btn.textContent = '⏳ Henter…'; }
+  if (!navigator.geolocation) {
+    if (btn) { btn.classList.remove('loading'); btn.textContent = '📍 Finn min posisjon'; }
+    return;
+  }
+  let done = false;
+  const reset = () => { if (btn) { btn.classList.remove('loading'); btn.textContent = '📍 Finn min posisjon'; } };
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => { if (done) return; done = true; reset(); fetchUV(pos.coords.latitude, pos.coords.longitude); },
+    () =>    { if (done) return; done = true; reset(); fetchUV(FALLBACK_LAT, FALLBACK_LON); },
+    { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 }
+  );
+  // Hard fallback hvis nettleseren aldri svarer
+  setTimeout(() => { if (done) return; done = true; reset(); fetchUV(FALLBACK_LAT, FALLBACK_LON); }, 8500);
+}
+
+function showError(msg) {
+  document.getElementById('app').innerHTML = `
+    <div class="status">
+      ${msg}
+      <div><button class="err-btn" onclick="init()">Prøv igjen</button></div>
+    </div>`;
+}
+
+function render(data, lat, lon, placeName = null) {
+  const now = new Date();
+  const hourly = data.hourly;
+  const times = hourly.time;
+  const uvs = hourly.uv_index;
+
+  // Find current hour index
+  let nowIdx = 0;
+  for (let i = 0; i < times.length; i++) {
+    if (new Date(times[i]) >= now) { nowIdx = i; break; }
+  }
+  // step back one if we overshot
+  if (nowIdx > 0 && Math.abs(new Date(times[nowIdx-1]) - now) < Math.abs(new Date(times[nowIdx]) - now)) {
+    nowIdx = nowIdx - 1;
+  }
+
+  const currentUV = Math.round(uvs[nowIdx] * 10) / 10;
+  const tier = uvColor(currentUV);
+
+  // Next 12 hours
+  const nextHours = [];
+  for (let i = nowIdx; i < Math.min(nowIdx + 13, times.length); i++) {
+    nextHours.push({ time: times[i], uv: uvs[i] });
+  }
+
+  // Daily
+  const dailyTimes = data.daily.time;
+  const dailyMax = data.daily.uv_index_max;
+  const hoursByDay = groupHoursByDay(times, uvs);
+
+  let html = `
+    <header>
+      <div class="loc">📍 ${placeName || (lat.toFixed(3) + ', ' + lon.toFixed(3))}</div>
+      <div class="time">${now.toLocaleString('no-NO', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</div>
+      <div><button class="locate-btn" id="locate-btn" onclick="locateMe()">📍 Finn min posisjon</button></div>
+    </header>
+
+    <div class="now-card">
+      <div class="now-label">UV nå</div>
+      <div class="now-value" style="color:${tier.color}">${currentUV.toFixed(1)}</div>
+      <div class="badge" style="background:${tier.color}">${tier.label}</div>
+      <div class="now-advice">${advice(currentUV)}</div>
+    </div>
+
+    <div class="section-title">Neste timer</div>
+    <div class="hours-scroll">
+  `;
+
+  nextHours.forEach((h, i) => {
+    const t = uvColor(h.uv);
+    const label = i === 0 ? 'Nå' : fmtHour(h.time);
+    html += `
+      <div class="hour-card">
+        <div class="hour-time">${label}</div>
+        <div class="hour-uv" style="color:${t.color}">${Math.round(h.uv * 10) / 10}</div>
+        <div class="hour-dot" style="background:${t.color}"></div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+
+  html += `<div class="section-title">De neste dagene <span style="text-transform:none;font-weight:400;color:#cbd5e1;">· trykk for timer</span></div>`;
+
+  dailyTimes.forEach((d, i) => {
+    const val = Math.round(dailyMax[i] * 10) / 10;
+    const t = uvColor(val);
+    const day = fmtDay(d);
+    const pct = Math.min(100, (val / 12) * 100);
+
+    const dayHours = (hoursByDay[d] || []).filter(h => h.uv > 0);
+
+    let hoursHtml;
+    if (dayHours.length === 0) {
+      hoursHtml = `<div class="day-hours-empty">Ingen UV-stråling denne dagen (mørketid).</div>`;
+    } else {
+      hoursHtml = `<div class="day-hours">`;
+      dayHours.forEach(h => {
+        const ht = uvColor(h.uv);
+        hoursHtml += `
+          <div class="day-hour-cell">
+            <div class="t">${fmtHour(h.time)}</div>
+            <div class="v" style="color:${ht.color}">${Math.round(h.uv * 10) / 10}</div>
+          </div>
+        `;
+      });
+      hoursHtml += `</div>`;
+    }
+
+    html += `
+      <div class="day-card" id="day-${i}">
+        <div class="day-row" onclick="toggleDay(${i})">
+          <div class="day-name">${day.main}<span class="sub">${day.sub}</span></div>
+          <div class="day-bar-wrap"><div class="day-bar" style="width:${pct}%;background:${t.color}"></div></div>
+          <div class="day-val" style="color:${t.color}">${val}</div>
+          <svg class="day-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        ${hoursHtml}
+      </div>
+    `;
+  });
+
+  html += `
+    <div class="legend">
+      <span><span class="dot" style="background:#4ade80"></span>0–2.5 Lav</span>
+      <span><span class="dot" style="background:#facc15"></span>3–5.5 Moderat</span>
+      <span><span class="dot" style="background:#fb923c"></span>6–7.5 Høy</span>
+      <span><span class="dot" style="background:#f87171"></span>8–10.5 S.høy</span>
+      <span><span class="dot" style="background:#a855f7"></span>11+ Ekstrem</span>
+    </div>
+    <footer>Data fra Open-Meteo (oppdateres time for time) · Prognoser lengre enn ~7 dager fram er mer usikre</footer>
+  `;
+
+  document.getElementById('app').innerHTML = html;
+}
+
+init();
+</script>
+</body>
+</html>
